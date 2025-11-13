@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const express = require("express");
 const path = require("path");
 const incidentRoutes = require('./incidentRoutes'); // <-- NEW: Import the routes
@@ -32,3 +33,25 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`✅ Running on http://localhost:${PORT}`);
 });
+=======
+const express = require("express");
+const path = require("path");
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// EJS setup
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
+// Static files
+app.use(express.static(path.join(__dirname, "public")));
+
+// Routes
+app.get("/", (req, res) => {
+  res.render("index");
+});
+
+app.listen(PORT, () => {
+  console.log(`✅ Running on http://localhost:${PORT}`);
+});
+>>>>>>> e9a9baabbf9c0938f0983708e124f6e3cd559a48
