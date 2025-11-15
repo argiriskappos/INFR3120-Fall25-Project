@@ -1,0 +1,60 @@
+=========================================================
+
+1. DEPENDENCIES
+
+=========================================================
+
+Ignore all installed modules
+
+/node_modules
+
+=========================================================
+
+2. CONFIG & SECRETS
+
+=========================================================
+
+Ignore environment variable files
+
+.env
+.env.*
+
+Ignore any other sensitive config files you might create
+
+config.js
+/config/keys.js
+
+=========================================================
+
+3. BUILD AND LOG FILES
+
+=========================================================
+
+Compiled/transpiled source and distribution folders
+
+/dist
+/build
+
+Log files
+
+*.log
+
+=========================================================
+
+4. OS AND EDITOR FILES
+
+=========================================================
+
+macOS and Linux temporary files
+
+.DS_Store
+
+Visual Studio Code settings
+
+.vscode/
+
+NPM & Yarn internal files
+
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
