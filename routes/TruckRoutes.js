@@ -1,29 +1,40 @@
 const express = require('express');
 const router = express.Router();
 
-// GET /trucks/create - Render the truck creation form
-router.get('/trucks/create', (req, res) => {
-    // Renders views/create.ejs (assuming it handles truck creation now)
+//Renders the truck creation form
+router.get('/create', (req, res) => {
+    // Renders create.ejs
     res.render('create', { 
         title: 'Register New Truck/Unit', 
-        activePage: 'trucks-create' 
+        activePage: 'create' // Set active page for header styling
     });
 });
 
-// GET /trucks - Placeholder for the View Trucks page
-router.get('/trucks', (req, res) => {
-
-    res.send('<h1>Trucks/Units List Page</h1><p>Work in progress. This route will render the list of trucks.</p>');
+// GET /requests - Placeholder for the View Trucks page
+router.get('/requests', (req, res) => {
+    // This is a placeholder for the page that lists all truck requests/orders
+    res.send('<h1>Truck Requests List Page</h1><p>Work in progress. This route will render the list of all truck requests.</p>');
 });
 
-// GET /trucks/:id - Placeholder for the Edit Truck page
-router.get('/trucks/:id', (req, res) => {
+// GET /requests/:id - Placeholder for the Edit Truck page
+router.get('/requests/:id', (req, res) => {
     // Placeholder logic - this would normally fetch the truck data and render the edit view
-    const mockTruckData = { id: req.params.id, title: 'Mock Truck Title', description: 'Mock Description', severity: 'Medium' };
+    const mockTruckData = { 
+        id: req.params.id, 
+        unitNumber: 'T-987', 
+        driverName: 'Jane Smith', 
+        origin: 'Detroit, MI', 
+        destination: 'Chicago, IL', 
+        cargoType: 'General Freight', 
+        weightKg: 18000, 
+        manifestSummary: 'BOL #9005: 20 Pallets of Auto Parts' 
+    };
     res.render('edit', { 
-        // NOTE: The template variable is kept as 'incident' to avoid breaking the existing EJS structure in edit.ejs
-        incident: mockTruckData, 
-        title: 'Edit Truck/Unit'
+        // NOTE: The template variable is kept as 'trip' in edit.ejs, so we use 'trip' here.
+        trip: mockTruckData, 
+        title: `Edit Truck Request: ${req.params.id}`,
+        activePage: 'requests'
     });
 });
 
+module.exports = router;

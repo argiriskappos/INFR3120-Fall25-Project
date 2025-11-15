@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-const incidentRoutes = require('./incidentRoutes'); // <-- NEW: Import the routes
+const truckRoutes = require('./TruckRoutes'); 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,19 +11,18 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 // Static files (CSS, JS, Images)
-// This makes files in the 'public' folder accessible via the root path (e.g., /css/style.css)
+// This makes files in the 'public' folder accessible via the root path 
 app.use(express.static(path.join(__dirname, "public")));
 
-// --- Route Handling ---
+//Route Handling
 
-// Apply the incident routes (for /create, /incidents)
-app.use('/', incidentRoutes); // <-- NEW: Apply routes
+// Apply the truck routes
+app.use('/', truckRoutes); 
 
-// Base Route (Home)
+// Base Route
 app.get("/", (req, res) => {
-  // Assuming you have views/index.ejs for the home page
   res.render("index", {
-      title: 'Home',
+      title: 'Truck Management Home',
       activePage: 'home'
   });
 });
