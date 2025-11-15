@@ -1,9 +1,25 @@
 const express = require("express");
 const path = require("path");
+// NEW: 1. Import dotenv to load environment variables (like MONGO_URI)
+const dotenv = require('dotenv'); 
+// NEW: 2. Import the database connection function
+const connectDB = require('./db'); 
 const truckRoutes = require('./TruckRoutes'); 
+
+// Load environment variables from .env file
+dotenv.config();
+
+// Connect to MongoDB
+connectDB();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Middleware
+// Allows the app to parse incoming request bodies with URL-encoded payloads
+app.use(express.urlencoded({ extended: true })); 
+// Allows the app to parse incoming request bodies with JSON payloads
+app.use(express.json());
 
 // EJS setup
 app.set("view engine", "ejs");
@@ -11,10 +27,9 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 // Static files (CSS, JS, Images)
-// This makes files in the 'public' folder accessible via the root path 
 app.use(express.static(path.join(__dirname, "public")));
 
-//Route Handling
+// --- Route Handling ---
 
 // Apply the truck routes
 app.use('/', truckRoutes); 
