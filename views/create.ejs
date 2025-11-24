@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,85 +16,86 @@
     <nav>
       <a href="/" class="<%= activePage === 'home' ? 'active' : '' %>">Home</a>
       <a href="/create" class="<%= activePage === 'create' ? 'active' : '' %>">Log New Trip</a>
-      <a href="/trips" class="<%= activePage === 'trips' ? 'active' : '' %>">View Active Trips</a>
-      <a href="/trucks" class="<%= activePage === 'trucks' ? 'active' : '' %>">Tracked Trucks</a>
+      <a href="/trucks" class="<%= activePage === 'trucks' ? 'active' : '' %>">View Active Trips</a>
     </nav>
   </header>
 
   <main class="page-content">
-
+    
+    <!-- Trip Log Form -->
     <div class="form-container">
         <h2>Log New Trip & Cargo Manifest</h2>
-        <p>Enter the trip details, schedule, and cargo manifest.</p>
-
-        <!-- FIXED: Now posts the correct MongoDB fields -->
-        <form id="tripLogForm" action="/create" method="POST">
-
-            <h3>Trip Details</h3>
+        <p>Enter the details for the truck's current journey, including its destination and cargo manifest.</p>
+        
+        <!-- NOTE: The 'action' attribute is left blank for now, assuming future POST handling -->
+        <form id="tripLogForm" action="/api/trips" method="POST">
+            
             <div class="form-row">
                 <div class="form-group">
-                    <label for="tripName">Trip / Route Name *</label>
-                    <input type="text" id="tripName" name="tripName" required placeholder="e.g., Toronto → Ottawa Delivery Run">
+                    <label for="unitNumber">Truck / Unit Number <span class="required-star">*</span></label>
+                    <input type="text" id="unitNumber" name="unitNumber" required placeholder="e.g., TRK-301">
                 </div>
-
+                
                 <div class="form-group">
-                    <label for="truckId">Truck / Unit ID *</label>
-                    <input type="text" id="truckId" name="truckId" required placeholder="e.g., TRK-301">
+                    <label for="driverName">Driver Name <span class="required-star">*</span></label>
+                    <input type="text" id="driverName" name="driverName" required placeholder="e.g., John Smith">
+                </div>
+            </div>
+
+            <h3>Route Details</h3>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="departureLocation">Departure Location <span class="required-star">*</span></label>
+                    <input type="text" id="departureLocation" name="departureLocation" required placeholder="e.g., Main Depot - City, State">
+                </div>
+                
+                <div class="form-group">
+                    <label for="finalDestination">Final Destination <span class="required-star">*</span></label>
+                    <input type="text" id="finalDestination" name="finalDestination" required placeholder="e.g., Customer Warehouse Z - City, State">
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="driverName">Driver Name *</label>
-                <input type="text" id="driverName" name="driverName" required placeholder="e.g., John Smith">
-            </div>
-
-            <h3>Schedule</h3>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="scheduledDeparture">Scheduled Departure *</label>
-                    <input type="date" id="scheduledDeparture" name="scheduledDeparture" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="estimatedArrival">Estimated Arrival *</label>
-                    <input type="date" id="estimatedArrival" name="estimatedArrival" required>
-                </div>
+                <label for="routeNotes">Route/Stop Notes (Optional)</label>
+                <textarea id="routeNotes" name="routeNotes" rows="3" placeholder="Any specific instructions, scheduled stops, or known delays."></textarea>
             </div>
 
             <h3>Cargo Details (Manifest)</h3>
+
             <div class="form-row">
                 <div class="form-group">
-                    <label for="cargoType">Primary Cargo Type *</label>
+                    <label for="cargoType">Primary Cargo Type <span class="required-star">*</span></label>
                     <select id="cargoType" name="cargoType" required>
                         <option value="">-- Select Cargo Type --</option>
                         <option value="General Freight">General Freight</option>
-                        <option value="Refrigerated Goods (Perishables)">Refrigerated Goods (Perishables)</option>
+                        <option value="Perishables">Refrigerated Goods (Perishables)</option>
                         <option value="Bulk Liquid">Bulk Liquid</option>
-                        <option value="Hazardous Materials">Hazardous Materials</option>
-                        <option value="Other">Other</option>
+                        <option value="Hazardous">Hazardous Materials</option>
                     </select>
                 </div>
-
+                
                 <div class="form-group">
                     <label for="weightKg">Total Weight (kg)</label>
-                    <input type="number" id="weightKg" name="weightKg" min="0" placeholder="e.g., 25000">
+                    <input type="number" id="weightKg" name="weightKg" placeholder="e.g., 25000" min="0">
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="manifestSummary">Manifest Summary *</label>
-                <textarea id="manifestSummary" name="manifestSummary" rows="3" required placeholder="Bill of lading, cargo notes, etc."></textarea>
+                <label for="manifestSummary">Manifest Summary / Details <span class="required-star">*</span></label>
+                <textarea id="manifestSummary" name="manifestSummary" rows="4" required placeholder="List bill of lading numbers, customer names, or item specifics (e.g., BOL #4592 - 12 pallets of consumer electronics)."></textarea>
             </div>
-
+            
             <div class="form-group" style="text-align: right; padding-top: 15px;">
-                <button type="submit" class="submit-btn primary">Log Trip & Create Manifest</button>
+                <button type="submit" class="submit-btn primary">
+                    Log Trip & Create Manifest
+                </button>
             </div>
-
         </form>
     </div>
-
   </main>
-
+  
+  <!-- Footer (About link removed) -->
   <footer>
     <p>&copy; 2025 Fleet Operations Tracker Project. INFR3120.</p>
   </footer>

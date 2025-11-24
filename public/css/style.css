@@ -1,3 +1,5 @@
+
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -106,7 +108,6 @@ footer {
   color: white;
   margin-top: 60px;
 }
-
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -334,3 +335,4 @@ footer {
 .delete-btn:hover {
     background: #e74c3c;
 }
+
