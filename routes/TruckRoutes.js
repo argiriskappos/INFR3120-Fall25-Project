@@ -1,40 +1,118 @@
 const express = require('express');
 const router = express.Router();
 
-//Renders the truck creation form
+
+const Truck = require('../model/Truck'); 
+
+
+
+// Show the form page where the user can create a truck//
 router.get('/create', (req, res) => {
-    // Renders create.ejs
     res.render('create', { 
         title: 'Register New Truck/Unit', 
-        activePage: 'create' // Set active page for header styling
+        activePage: 'create'
     });
 });
 
-// GET /requests - Placeholder for the View Trucks page
+
+
+// Save a new truck when the form is submitted //
+router.post('/create', async (req, res) => {
+    try {
+        // Create a new truck using the form data
+        const newTruck = new Truck({
+            tripName: req.body.tripName,
+            truckId: req.body.truckId,
+            driverName: req.body.driverName,
+            scheduledDeparture: req.body.scheduledDeparture,
+            estimatedArrival: req.body.estimatedArrival,
+            cargoType: req.body.cargoType,
+            weightKg: req.body.weightKg,
+            manifestSummary: req.body.manifestSummary,
+            status: "Scheduled"
+        });
+
+        // Save the new truck
+        await newTruck.save();
+
+        // Go back to the trucks page
+        res.redirect('/trucks');
+
+    } catch (err) {
+        console.error("Error saving truck:", err);
+        res.status(400).send("Error: " + err.message);
+    }
+});
+
+
+
+// Show all trucks in a table //
+
+router.get('/trucks', async (req, res) => {
+    try {
+        // Get all trucks (newest first)
+        const trucks = await Truck.find().sort({ createdAt: -1 });
+
+        // Send the trucks to the page
+        res.render('trucks', {
+            title: 'Tracked Trucks',
+            activePage: 'trucks',
+            trucks
+        });
+    } catch (err) {
+        console.error('Error fetching trucks:', err);
+        res.status(500).send('Error loading tracked trucks.');
+    }
+});
+
+
+// temporary page for requests
+// 
 router.get('/requests', (req, res) => {
-    // This is a placeholder for the page that lists all truck requests/orders
-    res.send('<h1>Truck Requests List Page</h1><p>Work in progress. This route will render the list of all truck requests.</p>');
+    res.send('<h1>Truck Requests List Page</h1><p>Work in progress. This route will show all truck requests.</p>');
 });
 
-// GET /requests/:id - Placeholder for the Edit Truck page
-router.get('/requests/:id', (req, res) => {
-    // Placeholder logic - this would normally fetch the truck data and render the edit view
-    const mockTruckData = { 
-        id: req.params.id, 
-        unitNumber: 'T-987', 
-        driverName: 'Jane Smith', 
-        origin: 'Detroit, MI', 
-        destination: 'Chicago, IL', 
-        cargoType: 'General Freight', 
-        weightKg: 18000, 
-        manifestSummary: 'BOL #9005: 20 Pallets of Auto Parts' 
-    };
-    res.render('edit', { 
-        // NOTE: The template variable is kept as 'trip' in edit.ejs, so we use 'trip' here.
-        trip: mockTruckData, 
-        title: `Edit Truck Request: ${req.params.id}`,
-        activePage: 'requests'
-    });
+
+
+// Load one truck so the user can edit it //
+
+router.get('/requests/:id', async (req, res) => {
+    try {
+        // Find the truck by its ID
+        const trip = await Truck.findById(req.params.id);
+
+        // If nothing found
+        if (!trip) {
+            return res.status(404).send('Trip not found');
+        }
+
+        // Show the edit page with that truck's data //
+        res.render('edit', { 
+            trip,
+            title: `Edit Truck Request: ${trip.id}`,
+            activePage: 'trucks'
+        });
+    } catch (err) {
+        console.error('Error loading trip for editing:', err);
+        res.status(500).send('Error loading trip.');
+    }
 });
+
+
+// Save the changes made to a truck after editing //
+router.post('/requests/:id', async (req, res) => {
+    try {
+        // Update the truck with new form data
+        await Truck.findByIdAndUpdate(req.params.id, req.body);
+
+        // Go back to the trucks page //
+        res.redirect('/trucks');
+    } catch (err) {
+        console.error('Error updating truck:', err);
+        res.status(500).send('Error updating truck.');
+    }
+});
+
+
 
 module.exports = router;

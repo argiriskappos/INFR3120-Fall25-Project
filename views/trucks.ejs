@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fleet Operations Tracker | <%= title %></title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+  <!-- This contains the logo and navigation menu -->
+  <header>
+    <div class="logo">
+      <img src="/img/logo.jpg" alt="Team Logo" />
+      <h1>Fleet Operations Tracker</h1>
+    </div>
+
+    <!-- Navigation links -->
+    <nav>
+      <a href="/" class="<%= activePage === 'home' ? 'active' : '' %>">Home</a>
+      <a href="/create" class="<%= activePage === 'create' ? 'active' : '' %>">Log New Trip</a>
+      <a href="/trucks" class="<%= activePage === 'trucks' ? 'active' : '' %>">View Active Trip</a>
+    </nav>
+  </header>
+
+
+  <!-- This section displays all tracked trucks in a table -->
+  <main class="page-content">
+    <div class="table-container">
+
+      <!-- Page title and short description -->
+      <h2>Tracked Trucks / Trips</h2>
+      <p>Below is a list of all tracked trucks currently stored in the system.</p>
+
+      <!-- Main data table -->
+      <table class="truck-table">
+
+        <!-- Table header row -->
+        <thead>
+          <tr>
+            <th>Trip / Route Name</th>
+            <th>Truck / Unit ID</th>
+            <th>Driver</th>
+            <th>Scheduled Departure</th>
+            <th>Estimated Arrival</th>
+            <th>Status</th>
+            <th>Cargo Type</th>
+            <th>Weight (kg)</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <!-- Table body where truck data will appear -->
+        <tbody>
+
+          <!-- If there are NO trucks, show this message -->
+          <% if (!trucks || trucks.length === 0) { %>
+            <tr>
+              <td colspan="9" class="no-data-cell">
+                No trucks found. <a href="/create" class="table-link">Log a new trip</a>.
+              </td>
+            </tr>
+
+          <% } else { %>
+
+            <!-- If trucks exist, loop through each one and display it -->
+            <% trucks.forEach(function(truck) { %>
+              <tr>
+
+                <!-- Display truck fields -->
+                <td><%= truck.tripName %></td>
+                <td><%= truck.truckId %></td>
+                <td><%= truck.driverName %></td>
+
+                <!-- Scheduled Departure Date -->
+                <td>
+                  <% if (truck.scheduledDeparture) { %>
+                    <%= truck.scheduledDeparture.toISOString().substring(0, 10) %>
+                  <% } else { %>
+                    -
+                  <% } %>
+                </td>
+
+                <!-- Estimated Arrival Date -->
+                <td>
+                  <% if (truck.estimatedArrival) { %>
+                    <%= truck.estimatedArrival.toISOString().substring(0, 10) %>
+                  <% } else { %>
+                    -
+                  <% } %>
+                </td>
+
+                <!-- Truck Status (with badge styling) -->
+                <td>
+                  <span class="status-badge status-<%= (truck.status || 'Scheduled').replace(/\s+/g, '-') %>">
+                    <%= truck.status || 'Scheduled' %>
+                  </span>
+                </td>
+
+                <td><%= truck.cargoType %></td>
+                <td><%= truck.weightKg %></td>
+
+                <!-- Link to view or edit that specific truck -->
+                <td>
+                  <a href="/requests/<%= truck._id %>" class="table-link">View / Edit</a>
+                </td>
+
+              </tr>
+            <% }); %>
+
+          <% } %>
+
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Fleet Operations Tracker Project. INFR3120.</p>
+  </footer>
+
+</body>
+</html>
