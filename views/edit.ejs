@@ -1,11 +1,20 @@
 <main class="page-content">
-       <div class="form-container">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <title>Fleet Operations Tracker | <%= title %></title>
+ <link rel="stylesheet" href="/css/style.css" />
+</head>
+     
+     
+      <div class="form-container">
       <h2>Editing Trip: <%= trip.tripName %> (<%= trip.truckId %>)</h2>
       <p>Trip ID: <%= trip._id %></p>
 
       <form action="/requests/<%= trip._id %>" method="POST">
-          <input type="hidden" name="_method" value="PUT"> 
-          
+      <!--labels like in the create form-->
           <div class="form-row">
               <div class="form-group">
                   <label for="tripName">Trip Name <span class="required-star">*</span></label>
@@ -66,7 +75,7 @@
               <label for="manifestSummary">Manifest Summary / Details <span class="required-star">*</span></label>
               <textarea id="manifestSummary" name="manifestSummary" rows="4" required><%= trip.manifestSummary %></textarea>
           </div>
-
+<!-- buttons to delete and edit-->
           <div class="form-group" style="text-align: right; padding-top: 15px;">
               <button type="submit" class="submit-btn primary">
                   Save Changes

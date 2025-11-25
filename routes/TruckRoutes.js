@@ -176,11 +176,8 @@ router.get('/requests', (req, res) => {
 router.get('/requests/:id', async (req, res) => {
     try {
         const trip = await Truck.findById(req.params.id);
-
-        if (!trip) {
-            return res.status(404).send('Trip not found');
-        }
-
+        if (!trip) return res.status(404).send('Trip not found');
+        
         res.render('edit', {
             trip,
             title: `Edit Truck Request: ${trip.id}`,
@@ -192,29 +189,9 @@ router.get('/requests/:id', async (req, res) => {
     }
 });
 
-router.get('/requests/:id', async (req, res) => {
+//Save edited truck
+router.post('/update-trip/:id', async (req, res) => {
     try {
-        const trip = await Truck.findById(req.params.id);
-
-        if (!trip) {
-            return res.status(404).send('Trip not found');
-        }
-
-        res.render('edit', {
-            trip,
-            title: `Edit Truck Request: ${trip.id}`,
-            activePage: 'trucks'
-        });
-    } catch (err) {
-        console.error('Error loading trip:', err);
-        res.status(500).send('Error loading trip.');
-    }
-});
-
-// Save edited truck
-router.put('/requests/:id', async (req, res) => {
-    try {
-        // Mongoose automatically handles updating the date fields from req.body
         await Truck.findByIdAndUpdate(req.params.id, req.body);
         res.redirect('/trucks');
     } catch (err) {
@@ -223,8 +200,8 @@ router.put('/requests/:id', async (req, res) => {
     }
 });
 
-// Delete a truck
-router.delete('/requests/:id', async (req, res) => {
+// deleting truck
+router.post('/delete-trip/:id', async (req, res) => {
     try {
         await Truck.findByIdAndDelete(req.params.id);
         console.log(`Trip successfully deleted: ${req.params.id}`);
@@ -234,6 +211,5 @@ router.delete('/requests/:id', async (req, res) => {
         res.status(500).send('Error deleting truck.');
     }
 });
-
 
 module.exports = router;
