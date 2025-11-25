@@ -38,11 +38,15 @@
       <h2>Centralized Fleet and Trip Management</h2>
       <p>Log new journeys, track vehicle status, and manage cargo manifests across your entire fleet operations.</p>
       <div class="hero-buttons">
+    <% if (!User) { %>
+      <!-- When NOT logged in -->
+      <a href="/login" class="hero-btn primary">+ Login</a>
+      <a href="/signup" class="hero-btn secondary">Sign Up</a>
+  <% } else { %>
+    <!-- When logged in -->
     <a href="/create" class="hero-btn primary">+ Log New Trip</a>
     <a href="/trucks" class="hero-btn secondary">View Active Trips</a>
 
-    <% if (User) { %>
-        <a href="/login" class="hero-btn auth">Sign In</a>
     <% } %>
 </div>
 
