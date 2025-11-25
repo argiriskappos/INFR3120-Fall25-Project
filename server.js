@@ -2,14 +2,11 @@
 
 const express = require("express");
 const path = require("path");
-// 1. Import dotenv to load environment variables (like MONGO_URI)
-const dotenv = require('dotenv'); 
-// 2. Import the database connection function
-const connectDB = require('./config/db'); 
+const dotenv = require('dotenv');
+const connectDB = require('./config/db');
+const truckRoutes = require('./routes/TruckRoutes');
 
-const truckRoutes = require('./routes/TruckRoutes'); 
-
-// Load environment variables from .env file.
+// Load environment variables
 dotenv.config();
 
 // Connect to MongoDB
@@ -19,33 +16,31 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-// Allows the app to parse incoming request bodies with URL-encoded payloads
-app.use(express.urlencoded({ extended: true })); 
-// Allows the app to parse incoming request bodies with JSON payloads
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // EJS setup
 app.set("view engine", "ejs");
-// Use 'views' folder for EJS templates
 app.set("views", path.join(__dirname, "views"));
 
-// Static files (CSS, JS, Images)
+// Static files
 app.use(express.static(path.join(__dirname, "public")));
 
-// --- Route Handling ---
+// ROUTES
+app.use('/', truckRoutes);
 
-// Apply the truck routes
-app.use('/', truckRoutes); 
-
-// Base Route
+// HOME ROUTE
 app.get("/", (req, res) => {
   res.render("index", {
-      title: 'Truck Management Home',
-      activePage: 'home'
+      title: "Truck Management Home",
+      activePage: "home",
+
+      // Pass User variable to EJS
+      User: req.session?.User || null
   });
 });
 
-// Start Server
+// Start server
 app.listen(PORT, () => {
   console.log(`✅ Running on http://localhost:${PORT}`);
-})
+});
