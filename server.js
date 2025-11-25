@@ -18,9 +18,7 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-// Use method-override after body parsing middleware
-app.use(methodOverride('_method')); // <-- ADD THIS
+app.use(methodOverride('_method'));
 
 // Session middleware
 app.use(session({
@@ -33,7 +31,7 @@ app.use(session({
     } 
 }));
 
-//  available in ALL EJS files
+//  available in all EJS files
 app.use((req, res, next) => {
     res.locals.User = req.session.User || null;
     next();
