@@ -1,5 +1,3 @@
-// TruckRoutes.js
-
 const express = require('express');
 const router = express.Router();
 
@@ -195,8 +193,9 @@ router.get('/requests/:id', async (req, res) => {
 });
 
 // Save edited truck
-router.post('/requests/:id', async (req, res) => {
+router.put('/requests/:id', async (req, res) => {
     try {
+        // Mongoose automatically handles updating the date fields from req.body
         await Truck.findByIdAndUpdate(req.params.id, req.body);
         res.redirect('/trucks');
     } catch (err) {
@@ -205,5 +204,18 @@ router.post('/requests/:id', async (req, res) => {
     }
 });
 
-module.exports = router;
+// Delete a truck
+router.delete('/requests/:id', async (req, res) => {
+    try {
+        await Truck.findByIdAndDelete(req.params.id);
+        console.log(`Trip successfully deleted: ${req.params.id}`);
+        // Redirect to the trucks list after successful deletion
+        res.redirect('/trucks');
+    } catch (err) {
+        console.error('Error deleting truck:', err);
+        res.status(500).send('Error deleting truck.');
+    }
+});
 
+
+module.exports = router;
