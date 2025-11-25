@@ -4,3 +4,6 @@ The topic that we chose as group 26 is a web-based Fleet Operations Tracker desi
 To ensure a smooth user experience, the Fleet Operations system's initial release will feature an  intuitive Landing Page that displays our team's unique logo and site name. This page will immediately offer a "View Fleet Status" hero button, for creating an appropriate object. Making everything organized in one place, ensuring that important tasks are never forgotten. By automating the messy parts of fleet management, the system helps companies save time, reduce costs, and operate with more confidence and control.
 
 While authentication is not required at this stage of development , the design prioritizes easy navigation to allow users to fully perform CRUD (Create, Read, Update, Delete) operations on their incident reports through a simple, functional interface, ensuring the core application logic is solid before moving to advanced features. This foundational interface will be deployed and accessible via a chosen cloud service provider, representing the first complete functional release of the Web Application.
+
+
+the link to the site: https://truck-shipment-managment.onrender.com
