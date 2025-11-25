@@ -25,7 +25,7 @@
       <a href="/signup" class="auth-link">Register</a>
   <% } else { %>
       <!-- When logged in -->
-      <span class="user-name">Welcome, <%= user.fullName %></span>
+      <span class="user-name">Welcome, <%= User.fullName %></span>
       <a href="/logout" class="auth-link logout">Logout</a>
   <% } %>
 </nav>
