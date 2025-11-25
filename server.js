@@ -30,7 +30,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use('/', truckRoutes);
 
 // HOME ROUTE
-app.get(["/index"], (req, res) => {
+app.get(["/", "/index"], (req, res) => {
     res.render("index", {
         title: "Truck Management Home",
         activePage: "home",
