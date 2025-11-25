@@ -19,6 +19,10 @@
     "express": "^5.1.0",
     "express-session": "^1.18.2",
     "mongoose": "^8.19.4"
+<<<<<<< HEAD
   },
   "type": "commonjs"
+=======
+  }
+>>>>>>> 6af3e4e48e344377c4212be65b365b2f3a47e0bc
 }
