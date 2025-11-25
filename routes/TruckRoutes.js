@@ -24,8 +24,15 @@ router.post('/signup', async (req, res) => {
 
         console.log(`New user registered: ${newUser.email}`);
 
-        // Bring users to the home page after successful sign-up
-        res.redirect('/index');
+        // This makes 'req.session.User' available for index.ejs to read
+        req.session.User = {
+            _id: newUser._id,
+            fullName: newUser.fullName, 
+            role: newUser.role,
+        };
+        
+        // Bring users to the home page after successful sign-up.
+        res.redirect('/'); 
 
     } catch (err) {
         let errorMessage = 'Registration failed. Please check your inputs.';
