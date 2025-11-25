@@ -2,15 +2,15 @@ const express = require('express');
 const router = express.Router();
 
 // Import the Truck Model and User model
-const Truck = require('../model/Truck'); 
+const Truck = require('../model/Truck');
 
-const User = require('../model/User'); 
+const User = require('../model/User');
 
 
 // Show the form page where the user can sign up
 router.get('/SignUp', (req, res) => {
-    res.render('SignUp', { 
-        title: 'User Registration', 
+    res.render('SignUp', {
+        title: 'User Registration',
         activePage: 'SignUp',
         error: null // Initialize error variable for EJS
     });
@@ -23,9 +23,9 @@ router.post('/signup', async (req, res) => {
         const newUser = await User.create(req.body);
 
         console.log(`New user registered: ${newUser.email}`);
-        
-        // Bring users to the home pageafter successful sign-up.
-        res.redirect('/index.ejs'); 
+
+        // Bring users to the home page after successful sign-up
+        res.redirect('/index');
 
     } catch (err) {
         let errorMessage = 'Registration failed. Please check your inputs.';
@@ -42,7 +42,7 @@ router.post('/signup', async (req, res) => {
 
         // Re-render the sign-up form with the error message
         res.render('SignUp', {
-            title: 'User Registration', 
+            title: 'User Registration',
             activePage: 'signup',
             error: errorMessage
         });
@@ -51,8 +51,8 @@ router.post('/signup', async (req, res) => {
 
 // Show the form page where the user can create a truck//
 router.get('/create', (req, res) => {
-    res.render('create', { 
-        title: 'Register New Truck/Unit', 
+    res.render('create', {
+        title: 'Register New Truck/Unit',
         activePage: 'create'
     });
 });
@@ -124,7 +124,7 @@ router.get('/requests/:id', async (req, res) => {
         }
 
         // Show the edit page with that truck's data
-        res.render('edit', { 
+        res.render('edit', {
             trip,
             title: `Edit Truck Request: ${trip.id}`,
             activePage: 'trucks'
@@ -136,7 +136,7 @@ router.get('/requests/:id', async (req, res) => {
 });
 
 
-// Save the changes made to a truck after editing 
+// Save the changes made to a truck after editing
 router.post('/requests/:id', async (req, res) => {
     try {
         // Update the truck with new form data

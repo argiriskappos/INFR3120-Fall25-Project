@@ -1,4 +1,4 @@
-// server.js
+// server.js (Corrected)
 
 const express = require("express");
 const path = require("path");
@@ -30,17 +30,16 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use('/', truckRoutes);
 
 // HOME ROUTE
-app.get("/", (req, res) => {
-  res.render("index", {
-      title: "Truck Management Home",
-      activePage: "home",
-
-      // Pass User variable to EJS
-      User: req.session?.User || null
-  });
+app.get(["/index"], (req, res) => {
+    res.render("index", {
+        title: "Truck Management Home",
+        activePage: "home",
+        // Pass User variable to EJS
+        User: req.session?.User || null
+    });
 });
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`✅ Running on http://localhost:${PORT}`);
+    console.log(`✅ Running on http://localhost:${PORT}`);
 });
