@@ -1,6 +1,5 @@
 // TruckRoutes.js
 
-
 const express = require('express');
 const router = express.Router();
 
@@ -11,39 +10,34 @@ const User = require('../model/User');
 
 // SIGN UP ROUTES
 
-const User = require('../model/User');
 
 // Show the form page where the user can sign up
-router.get('/SignUp', (req, res) => {
+router.get('/signup', (req, res) => {
     res.render('SignUp', {
         title: 'User Registration',
         activePage: 'SignUp',
-        error: null // Initialize error variable for EJS
+        error: null
     });
 });
 
 // Handle user registration submission
 router.post('/signup', async (req, res) => {
     try {
-        // Create the new user document using the Mongoose model
         const newUser = await User.create(req.body);
 
         console.log(`New user registered: ${newUser.email}`);
 
-        // This line now successfully sets the session data
         req.session.User = {
             _id: newUser._id,
-            fullName: newUser.fullName, 
+            fullName: newUser.fullName,
             role: newUser.role,
         };
-        
-        // Bring users to the home page after successful sign-up.
-        res.redirect('/'); 
+
+        res.redirect('/');
 
     } catch (err) {
         let errorMessage = 'Registration failed. Please check your inputs.';
 
-        // Handle specific MongoDB/Mongoose errors
         if (err.code === 11000) {
             errorMessage = 'An account with this email already exists.';
         } else if (err.errors) {
@@ -53,7 +47,6 @@ router.post('/signup', async (req, res) => {
             errorMessage = err.message || errorMessage;
         }
 
-        // Re-render the sign-up form with the error message
         res.render('SignUp', {
             title: 'User Registration',
             activePage: 'signup',
@@ -63,7 +56,7 @@ router.post('/signup', async (req, res) => {
 });
 
 
-//LOGIN ROUTES
+// LOGIN ROUTES
 
 
 // Show login form
@@ -90,7 +83,6 @@ router.post('/login', async (req, res) => {
             });
         }
 
-        // Plain text password check (add bcrypt later if needed)
         if (user.password !== password) {
             return res.render('login', {
                 title: 'Login',
@@ -99,7 +91,6 @@ router.post('/login', async (req, res) => {
             });
         }
 
-        // Save user in session
         req.session.User = {
             _id: user._id,
             fullName: user.fullName,
@@ -118,7 +109,7 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// LOGOUT
+// LOGOUT ROUTE
 
 
 router.get('/logout', (req, res) => {
@@ -126,7 +117,6 @@ router.get('/logout', (req, res) => {
         res.redirect('/');
     });
 });
-
 
 // TRUCK ROUTES
 
@@ -139,11 +129,9 @@ router.get('/create', (req, res) => {
     });
 });
 
-
 // Save a new truck when the form is submitted
 router.post('/create', async (req, res) => {
     try {
-        // Create a new truck using the form data
         const newTruck = new Truck({
             tripName: req.body.tripName,
             truckId: req.body.truckId,
@@ -156,10 +144,7 @@ router.post('/create', async (req, res) => {
             status: "Scheduled"
         });
 
-        // Save the new truck
         await newTruck.save();
-
-        // Go back to the trucks page
         res.redirect('/trucks');
 
     } catch (err) {
@@ -168,15 +153,11 @@ router.post('/create', async (req, res) => {
     }
 });
 
-
-
-// Show all trucks in a table
+// Show all trucks
 router.get('/trucks', async (req, res) => {
     try {
-        // Get all trucks (newest first)
         const trucks = await Truck.find().sort({ createdAt: -1 });
 
-        // Send the trucks to the page
         res.render('trucks', {
             title: 'Tracked Trucks',
             activePage: 'trucks',
@@ -188,44 +169,35 @@ router.get('/trucks', async (req, res) => {
     }
 });
 
-
-// temporary page for requests
+// Requests page
 router.get('/requests', (req, res) => {
-    res.send('<h1>Truck Requests List Page</h1><p>Work in progress. This route will show all truck requests.</p>');
+    res.send('<h1>Truck Requests List Page</h1><p>Work in progress.</p>');
 });
 
-
-// Load one truck so the user can edit it
+// Load single truck for editing
 router.get('/requests/:id', async (req, res) => {
     try {
-        // Find the truck by its ID
         const trip = await Truck.findById(req.params.id);
 
-        // If nothing found
         if (!trip) {
             return res.status(404).send('Trip not found');
         }
 
-        // Show the edit page with that truck's data
         res.render('edit', {
             trip,
             title: `Edit Truck Request: ${trip.id}`,
             activePage: 'trucks'
         });
     } catch (err) {
-        console.error('Error loading trip for editing:', err);
+        console.error('Error loading trip:', err);
         res.status(500).send('Error loading trip.');
     }
 });
 
-
-// Save the changes made to a truck after editing
+// Save edited truck
 router.post('/requests/:id', async (req, res) => {
     try {
-        // Update the truck with new form data
         await Truck.findByIdAndUpdate(req.params.id, req.body);
-
-        // Go back to the trucks page
         res.redirect('/trucks');
     } catch (err) {
         console.error('Error updating truck:', err);
@@ -234,4 +206,4 @@ router.post('/requests/:id', async (req, res) => {
 });
 
 module.exports = router;
-module.exports = router;
+
