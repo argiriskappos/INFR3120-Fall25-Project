@@ -7,10 +7,16 @@
  <title>Fleet Operations Tracker |
 <%= title %></title>
  <link rel="stylesheet" href="/css/style.css" />
+ <link rel="stylesheet" href="/css/form_style.css" /> 
 </head>
-     
-     
-      <div class="form-container">
+<body>
+
+    <!-- Error/Message Box Display -->
+    <% if (error) { %>
+        <div class="message-box error-box"><%= error %></div>
+    <% } %>
+
+    <div class="form-container">
       <h2>Editing Trip: <%= trip.tripName %> (<%= trip.truckId %>)</h2>
       <p>Trip ID: <%= trip._id %></p>
 
@@ -32,65 +38,43 @@
               <label for="driverName">Driver Name <span class="required-star">*</span></label>
               <input type="text" id="driverName" name="driverName" value="<%= trip.driverName %>" required>
           </div>
-   
-        
+          
           <div class="form-row">
               <div class="form-group">
-                  <label for="scheduledDeparture">Scheduled Departure <span class="required-star">*</span></label>
+                  <label for="scheduledDeparture">Scheduled Departure</label>
                   <input type="date" id="scheduledDeparture" name="scheduledDeparture" 
-                      value="<%= 
- new Date(trip.scheduledDeparture).toISOString().slice(0, 10) %>" required>
+                         value="<%= trip.scheduledDeparture ? trip.scheduledDeparture.toISOString().substring(0, 10) : '' %>">
               </div>
               <div class="form-group">
-                  <label for="estimatedArrival">Estimated Arrival <span class="required-star">*</span></label>
-                  <!-- FIX: Added 'required' attribute to prevent Mongoose validation failure -->
+                  <label for="estimatedArrival">Estimated Arrival</label>
                   <input type="date" id="estimatedArrival" name="estimatedArrival" 
-                      value="<%= trip.estimatedArrival ?
- new Date(trip.estimatedArrival).toISOString().slice(0, 10) : '' %>" required>
+                         value="<%= trip.estimatedArrival ? trip.estimatedArrival.toISOString().substring(0, 10) : '' %>">
               </div>
           </div>
 
           <div class="form-row">
               <div class="form-group">
-                  <label for="status">Current Status</label>
-                  <select id="status" name="status">
-     
-                  <option value="Scheduled" <%= trip.status === 'Scheduled' ? 'selected' : '' %>>Scheduled</option>
-                      <option value="In Transit" <%= trip.status === 'In Transit' ? 'selected' : '' %>>In Transit</option>
-                      <option value="Delayed" <%= trip.status === 'Delayed' ? 'selected' : '' %>>Delayed</option>
-      
-                  <option value="Delivered" <%= trip.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                      <option value="Cancelled" <%= trip.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
-                  </select>
-              </div>
-          
-          <div class="form-group">
                   <label for="cargoType">Cargo Type <span class="required-star">*</span></label>
                   <select id="cargoType" name="cargoType" required>
-                      <option value="General" <%= trip.cargoType === 'General' ?
- 'selected' : '' %>>General Freight</option>
-                      <option value="Refrigerated" <%= trip.cargoType === 'Refrigerated' ?
- 'selected' : '' %>>Refrigerated</option>
-                      <option value="Bulk Liquid" <%= trip.cargoType === 'Bulk Liquid' ?
- 'selected' : '' %>>Bulk Liquid</option>
-                      <option value="Hazardous" <%= trip.cargoType === 'Hazardous' ?
- 'selected' : '' %>>Hazardous Materials</option>
+                      <option value="">-- Select Cargo Type --</option>
+                      <option value="General Freight" <%= trip.cargoType === 'General Freight' ? 'selected' : '' %>>General Freight</option>
+                      <option value="Refrigerated Goods (Perishables)" <%= trip.cargoType === 'Refrigerated Goods (Perishables)' ? 'selected' : '' %>>Refrigerated Goods (Perishables)</option>
+                      <option value="Bulk Liquid" <%= trip.cargoType === 'Bulk Liquid' ? 'selected' : '' %>>Bulk Liquid</option>
+                      <option value="Hazardous Materials" <%= trip.cargoType === 'Hazardous Materials' ? 'selected' : '' %>>Hazardous Materials</option>
+                      <option value="Other" <%= trip.cargoType === 'Other' ? 'selected' : '' %>>Other</option>
                   </select>
               </div>
-          </div>
-
-          <div class="form-group">
-              <label for="weightKg">Total Weight (kg)</label>
-              <input type="number" id="weightKg" name="weightKg" value="<%= trip.weightKg %>" min="0">
-     
+              <div class="form-group">
+                  <label for="weightKg">Total Weight (kg)</label>
+                  <input type="number" id="weightKg" name="weightKg" value="<%= trip.weightKg %>" min="0">
+              </div>
           </div>
 
           <div class="form-group">
               <label for="manifestSummary">Manifest Summary / Details <span class="required-star">*</span></label>
               <textarea id="manifestSummary" name="manifestSummary" rows="4" required><%= trip.manifestSummary %></textarea>
           </div>
-<div class="form-group" style="text-align: right; padding-top: 15px;">
-              
+          <div class="form-group" style="text-align: right; padding-top: 15px;">
  <button type="submit" class="submit-btn primary">
                   Save Changes
               </button>
@@ -99,14 +83,68 @@
       <hr>
 
       <div style="text-align: right; margin-top: 20px;">
-          <form action="/delete-trip/<%= trip._id %>" method="POST" style="display: inline-block;">
-              <button type="submit" class="submit-btn delete-btn" onclick="return confirm('Are you sure you want to delete this trip?');">
+          <!-- Custom form handling for deletion -->
+          <form id="deleteForm" action="/delete-trip/<%= trip._id %>" method="POST" style="display: inline-block;">
+              <input type="hidden" name="_method" value="DELETE">
+              <button type="button" id="deleteButton" class="submit-btn delete-btn">
                   Delete Trip
               </button>
           </form>
       </div>
+    </div>
 
-       </div>
-  </main>
+    <!-- Custom Confirmation Modal -->
+    <div id="confirmationModal" style="
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        background-color: rgba(0, 0, 0, 0.5); display: none; 
+        justify-content: center; align-items: center; z-index: 1000;
+    ">
+        <div style="
+            background: #fff; padding: 30px; border-radius: 8px; 
+            max-width: 400px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        ">
+            <h3 style="color: #d33; margin-top: 0;">Confirm Deletion</h3>
+            <p>Are you absolutely sure you want to delete this trip? This action cannot be undone.</p>
+            <div style="margin-top: 20px;">
+                <button id="cancelDelete" class="submit-btn secondary" style="margin-right: 10px;">Cancel</button>
+                <button id="confirmDelete" class="submit-btn delete-btn">Yes, Delete It</button>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<script>
+    // Get elements
+    const deleteButton = document.getElementById('deleteButton');
+    const deleteForm = document.getElementById('deleteForm');
+    const modal = document.getElementById('confirmationModal');
+    const confirmDelete = document.getElementById('confirmDelete');
+    const cancelDelete = document.getElementById('cancelDelete');
+
+    // Show the modal when the delete button is clicked
+    deleteButton.addEventListener('click', (e) => {
+        // Prevent form submission if the button type was 'submit'
+        e.preventDefault(); 
+        modal.style.display = 'flex';
+    });
+
+    // Hide the modal when cancel is clicked
+    cancelDelete.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    // Submit the form when confirm is clicked
+    confirmDelete.addEventListener('click', () => {
+        // Submit the form using its action attribute
+        deleteForm.submit(); 
+        modal.style.display = 'none';
+    });
+    
+</script>
+
+<footer>
+    <p>&copy; 2025 Fleet Operations Tracker Project. INFR3120</p>
+</footer>
 </body>
 </html>
