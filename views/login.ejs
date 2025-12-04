@@ -6,84 +6,78 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-
-  <title>Fleet Operations Tracker | Login</title>
+  <title>Fleet Operations Tracker |
+Login</title>
 
   <link rel="stylesheet" href="/css/form_style.css" />
 </head>
 <body>
 
-  <!-- Header Section -->
   <header>
     <div class="logo">
-      <!-- Website logo image -->
       <img src="/img/logo.jpg" alt="Team Logo" />
-
-      <!-- Website title -->
       <h1>Fleet Operations Tracker</h1>
     </div>
 
-    <!-- Navigation bar -->
     <nav>
       <% if (!User) { %>
-        <!-- Show login link if user is NOT logged in -->
         <a href="/login" class="auth-link active">Login</a>
       <% } else { %>
-        <!-- Show user info and links when user IS logged in -->
         <span class="user-name">Welcome, <%= User.fullName %></span>
         <a href="/" class="auth-link">Home</a>
-        <a href="/create" class="auth-link">Log New Trip</a>
+    
+    <a href="/create" class="auth-link">Log New Trip</a>
         <a href="/trucks" class="auth-link">View Trips</a>
         <a href="/logout" class="auth-link logout">Logout</a>
       <% } %>
     </nav>
   </header>
 
-  <!-- Main content area -->
   <main class="page-content">
-    <section class="form-container">
+    <div class="form-container sign-up-form">
 
-      <!-- Login heading text -->
       <h2>Login to Your Account</h2>
 
-      <!-- Show error message if login fails -->
       <% if (error) { %>
-        <div class="error-message"><%= error %></div>
+        <div class="message-box error-box"><%= error %></div>
       <% } %>
 
-      <!-- Login form starts here -->
-      <form action="/login" method="POST" class="auth-form">
+      <form action="/login" method="POST">
 
-        <!-- Email input field -->
+ 
         <div class="form-group">
-          <label>Email Address</label>
+          <label>Email Address <span class="required-star">*</span></label>
           <input type="email" name="email" placeholder="Enter your email" required />
         </div>
 
-        <!-- Password input field -->
         <div class="form-group">
-          <label>Password</label>
+          <label>Password <span class="required-star">*</span></label>
           <input type="password" name="password" placeholder="Enter your password" required />
         </div>
 
-        <!-- Login button -->
-        <button type="submit" class="btn primary-btn">Login</button>
+        <div class="form-group" style="text-align: right; padding-top: 15px;">
+            <button type="submit" class="submit-btn primary">Login</button>
+        </div>
 
-        <!-- Link for users who don't have an account -->
+ 
+        <a href="/forgot-password" class="btn secondary-btn"
+          style="margin-top: 15px;
+display:block; text-align:center;">
+          Forgot Your Password?
+        </a>
         <p class="form-footer">
           Don’t have an account? 
           <a href="/signup">Register here</a>
         </p>
 
       </form>
-    </section>
+    </div>
   </main>
 
-  <!-- Page footer -->
   <footer>
-    <p>&copy; 2025 Fleet Operations Tracker Project. INFR3120.</p>
+    <p>&copy; 2025 Fleet Operations 
+Tracker Project. INFR3120.</p>
   </footer>
 
 </body>
 </html>
-

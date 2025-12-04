@@ -89,6 +89,42 @@ app.get(["/", "/index"], (req, res) => {
   });
 });
 
+const User = require("./models/User");
+
+// Forgot Password Page
+app.get("/forgot-password", (req, res) => {
+  res.render("forgotPassword", { error: null });
+});
+
+// Check Email Exists
+app.post("/forgot-password", async (req, res) => {
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return res.render("forgotPassword", { error: "No account found with that email." });
+  }
+
+  // Render reset password page with userId
+  res.render("resetPassword", { userId: user._id, error: null });
+});
+
+// Reset User Password
+app.post("/reset-password", async (req, res) => {
+  const { userId, newPassword, confirmPassword } = req.body;
+
+  if (newPassword !== confirmPassword) {
+    return res.render("resetPassword", { userId, error: "Passwords do not match." });
+  }
+
+  if (newPassword.length < 6) {
+    return res.render("resetPassword", { userId, error: "Password must be at least 6 characters long." });
+  }
+
+  await User.findByIdAndUpdate(userId, { password: newPassword });
+
+  return res.redirect("/login");
+});
+
 // Start
 app.listen(PORT, () => {
   console.log(`Running at http://localhost:${PORT}`);
