@@ -117,6 +117,7 @@ router.post('/create', ensureAuth, async (req, res) => {
         });
 
         await newTrip.save();
+        // The redirect to the list of trucks is correct
         res.redirect('/trucks?message=Trip%20Logged%20Successfully');
     } catch (err) {
         console.error('Error logging new trip:', err);
@@ -126,7 +127,7 @@ router.post('/create', ensureAuth, async (req, res) => {
 });
 
 // Route to list all active trips
-router.get('/trucks', async (req, res) => {
+router.get('/trucks', ensureAuth, async (req, res) => {
     try {
         // Fetch all trips from all users
         const trips = await Truck.find({})
@@ -142,12 +143,13 @@ router.get('/trucks', async (req, res) => {
         });
     } catch (err) {
         console.error('Error fetching trips:', err);
-        res.status(500).send('Error fetching trip data.');
+        // Redirect to a safe page on error
+        res.redirect('/?error=Failed%20to%20load%20trip%20data%20due%20to%20a%20server%20error.');
     }
 });
 
 // Show edit page
-router.get('/edit-trip/:id', async (req, res) => {
+router.get('/edit-trip/:id', ensureAuth, async (req, res) => {
     try {
         const trip = await Truck.findById(req.params.id).lean();
         
@@ -168,13 +170,14 @@ router.get('/edit-trip/:id', async (req, res) => {
 });
 
 // Save edited trip
-router.post('/update-trip/:id', async (req, res) => {
+router.post('/update-trip/:id', ensureAuth, async (req, res) => {
     try {
         let trip = await Truck.findById(req.params.id);
         
         if (!trip) return res.status(404).send('Trip not found');
 
         await Truck.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        // The redirect to the list of trucks is correct
         res.redirect('/trucks?message=Trip%20Updated%20Successfully');
     } catch (err) {
         console.error('Error updating trip:', err);
@@ -184,7 +187,7 @@ router.post('/update-trip/:id', async (req, res) => {
 });
 
 // Delete trip
-router.post('/delete-trip/:id', async (req, res) => {
+router.post('/delete-trip/:id', ensureAuth, async (req, res) => {
     try {
         let trip = await Truck.findById(req.params.id);
 
@@ -193,6 +196,7 @@ router.post('/delete-trip/:id', async (req, res) => {
         // Perform the deletion
         await Truck.deleteOne({ _id: req.params.id });
 
+        // The redirect to the list of trucks is correct
         res.redirect('/trucks?message=Trip%20Deleted%20Successfully');
     } catch (err) {
         console.error('Error deleting trip:', err);
