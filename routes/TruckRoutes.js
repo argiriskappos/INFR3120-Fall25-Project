@@ -1,12 +1,19 @@
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
 
 // Import the Truck Model and User model
-const Truck = require('../model/Truck');
-const User = require('../model/User');
+const Truck = require('../models/Truck'); 
+const User = require('../models/User'); 
 
-
-// SIGN UP ROUTES
+// This function ensures only authenticated users can proceed.
+function ensureAuth(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    // Redirect to login with an error message if not authenticated
+    res.redirect('/login?error=Please%20log%20in%20to%20access%20that%20page.');
+}
 
 
 // Show the form page where the user can sign up
@@ -14,24 +21,33 @@ router.get('/signup', (req, res) => {
     res.render('SignUp', {
         title: 'User Registration',
         activePage: 'SignUp',
-        error: null
+        error: req.query.error || null
     });
 });
 
 // Handle user registration submission
 router.post('/signup', async (req, res) => {
     try {
-        const newUser = await User.create(req.body);
+        const { email, password, fullName, role } = req.body;
+
+        // Check if user already exists
+        let user = await User.findOne({ email });
+        if (user) {
+            return res.redirect('/signup?error=An%20account%20with%20this%20email%20already%20exists.');
+        }
+
+        const newUser = await User.create({ email, password, fullName, role });
 
         console.log(`New user registered: ${newUser.email}`);
 
-        req.session.User = {
-            _id: newUser._id,
-            fullName: newUser.fullName,
-            role: newUser.role,
-        };
-
-        res.redirect('/');
+        // Automatically log in the user after successful registration using Passport's login method
+        req.logIn(newUser, (err) => {
+            if (err) {
+                console.error("Auto-login error after signup:", err);
+                return res.redirect('/login');
+            }
+            res.redirect('/');
+        });
 
     } catch (err) {
         let errorMessage = 'Registration failed. Please check your inputs.';
@@ -47,141 +63,140 @@ router.post('/signup', async (req, res) => {
 
         res.render('SignUp', {
             title: 'User Registration',
-            activePage: 'signup',
-            error: errorMessage
+            activePage: 'SignUp',
+            error: errorMessage,
         });
     }
 });
 
 
-// LOGIN ROUTES
-
-
-// Show login form
+// Show login page
 router.get('/login', (req, res) => {
+    // Check for query parameters for error messages
+    const error = req.query.error || req.flash('error')?.[0] || null;
+
     res.render('login', {
-        title: 'Login',
+        title: 'User Login',
         activePage: 'login',
-        error: null
+        error: error
     });
 });
 
-// Handle login submission
-router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+// Handle local login submission
+router.post(
+    '/login',
+    passport.authenticate('local', {
+        successRedirect: '/',
+        failureRedirect: '/login?error=Invalid%20email%20or%20password.',
+        failureFlash: true
+    })
+);
 
-    try {
-        const user = await User.findOne({ email });
 
-        if (!user) {
-            return res.render('login', {
-                title: 'Login',
-                activePage: 'login',
-                error: 'User not found'
-            });
-        }
+// Google Auth
+router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-        if (user.password !== password) {
-            return res.render('login', {
-                title: 'Login',
-                activePage: 'login',
-                error: 'Incorrect password'
-            });
-        }
-
-        req.session.User = {
-            _id: user._id,
-            fullName: user.fullName,
-            role: user.role
-        };
-
+// Google Auth Callback
+router.get(
+    '/auth/google/callback',
+    passport.authenticate('google', {
+        failureRedirect: '/login?error=Google%20Sign-in%20Failed',
+        failureFlash: true
+    }),
+    (req, res) => {
         res.redirect('/');
-
-    } catch (err) {
-        console.error(err);
-        res.render('login', {
-            title: 'Login',
-            activePage: 'login',
-            error: 'Login failed'
-        });
     }
-});
-
-// LOGOUT ROUTE
+);
 
 
+// Logout User
 router.get('/logout', (req, res) => {
-    req.session.destroy(() => {
-        res.redirect('/');
-    });
-});
-
-// TRUCK ROUTES
-
-
-// Show the form page where the user can create a truck
-router.get('/create', (req, res) => {
-    res.render('create', {
-        title: 'Register New Truck/Unit',
-        activePage: 'create'
-    });
-});
-
-// Save a new truck when the form is submitted
-router.post('/create', async (req, res) => {
-    try {
-        const newTruck = new Truck({
-            tripName: req.body.tripName,
-            truckId: req.body.truckId,
-            driverName: req.body.driverName,
-            scheduledDeparture: req.body.scheduledDeparture,
-            estimatedArrival: req.body.estimatedArrival,
-            cargoType: req.body.cargoType,
-            weightKg: req.body.weightKg,
-            manifestSummary: req.body.manifestSummary,
-            status: "Scheduled"
+    // Passport's logout functionality
+    req.logout(err => {
+        if (err) {
+            console.error("Logout error:", err);
+        }
+        // Destroy the session and redirect
+        req.session.destroy(err => {
+            if (err) {
+                console.error("Session destroy error:", err);
+            }
+            res.redirect('/login?message=You%20have%20been%20logged%20out.');
         });
+    });
+});
 
-        await newTruck.save();
-        res.redirect('/trucks');
+// Show form to create a new trip/truck request
+router.get('/create', ensureAuth, (req, res) => {
+    res.render('create', {
+        title: 'Log New Trip',
+        activePage: 'create',
+        trip: null // For a new form
+    });
+});
+
+
+// Handle new trip/truck request submission
+router.post('/create', ensureAuth, async (req, res) => {
+    try {
+
+        const newTrip = await Truck.create(req.body);
+
+        console.log(`New trip logged: ${newTrip._id}`);
+
+        res.redirect('/trucks?message=Trip%20Logged%20Successfully');
 
     } catch (err) {
-        console.error("Error saving truck:", err);
-        res.status(400).send("Error: " + err.message);
+        console.error('Error logging new trip:', err);
+        
+        // Handle validation errors or database issues
+        res.render('create', { 
+            title: 'Log New Trip',
+            activePage: 'create',
+            error: 'Failed to log trip. Check required fields or try again.',
+            trip: req.body 
+        });
     }
 });
 
-// Show all trucks
-router.get('/trucks', async (req, res) => {
+
+// Show all tracked trips
+router.get('/trucks', ensureAuth, async (req, res) => {
     try {
-        const trucks = await Truck.find().sort({ createdAt: -1 });
+        // Fetch all trips in the system (removed filtering by user)
+        const trips = await Truck.find({}).lean().sort({ createdAt: 'desc' });
+        
+        // Extract message from query params if available
+        const message = req.query.message || null;
+        const error = req.query.error || null; // For unauthorized errors
 
         res.render('trucks', {
-            title: 'Tracked Trucks',
+            trips,
+            title: 'Active Trip Manifests',
             activePage: 'trucks',
-            trucks
+            message: message,
+            error: error
         });
     } catch (err) {
-        console.error('Error fetching trucks:', err);
+        console.error('Error loading tracked trucks:', err);
         res.status(500).send('Error loading tracked trucks.');
     }
 });
 
-// Requests page
-router.get('/requests', (req, res) => {
-    res.send('<h1>Truck Requests List Page</h1><p>Work in progress.</p>');
-});
-
 // Load single truck for editing
-router.get('/requests/:id', async (req, res) => {
+router.get('/requests/:id', ensureAuth, async (req, res) => {
     try {
-        const trip = await Truck.findById(req.params.id);
+        const trip = await Truck.findById(req.params.id).lean();
+        
         if (!trip) return res.status(404).send('Trip not found');
         
+        const error = req.query.error || null;
+
         res.render('edit', {
             trip,
-            title: `Edit Truck Request: ${trip.id}`,
-            activePage: 'trucks'
+            title: `Edit Trip: ${trip.unitNumber || trip._id}`,
+            activePage: 'trucks',
+            error: error
         });
     } catch (err) {
         console.error('Error loading trip:', err);
@@ -189,27 +204,37 @@ router.get('/requests/:id', async (req, res) => {
     }
 });
 
-//Save edited truck
-router.post('/update-trip/:id', async (req, res) => {
+// Save edited trip
+router.post('/update-trip/:id', ensureAuth, async (req, res) => {
     try {
-        await Truck.findByIdAndUpdate(req.params.id, req.body);
-        res.redirect('/trucks');
+        let trip = await Truck.findById(req.params.id);
+        
+        if (!trip) return res.status(404).send('Trip not found');
+
+        await Truck.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        res.redirect('/trucks?message=Trip%20Updated%20Successfully');
     } catch (err) {
-        console.error('Error updating truck:', err);
-        res.status(500).send('Error updating truck.');
+        console.error('Error updating trip:', err);
+        // Redirect back to the edit page on error
+        res.redirect(`/requests/${req.params.id}?error=Failed%20to%20update%20trip.%20Check%20your%20inputs.`);
     }
 });
 
-// deleting truck
-router.post('/delete-trip/:id', async (req, res) => {
+// Delete trip
+router.post('/delete-trip/:id', ensureAuth, async (req, res) => {
     try {
+        let trip = await Truck.findById(req.params.id);
+
+        if (!trip) return res.status(404).send('Trip not found');
+
+        
         await Truck.findByIdAndDelete(req.params.id);
-        console.log(`Trip successfully deleted: ${req.params.id}`);
-        res.redirect('/trucks');
+        res.redirect('/trucks?message=Trip%20Deleted%20Successfully');
     } catch (err) {
-        console.error('Error deleting truck:', err);
-        res.status(500).send('Error deleting truck.');
+        console.error('Error deleting trip:', err);
+        res.status(500).send('Error deleting trip.');
     }
 });
+
 
 module.exports = router;
