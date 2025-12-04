@@ -91,7 +91,7 @@ app.get(["/", "/index"], (req, res) => {
   });
 });
 
-const User = require("./models/User"); 
+const User = require("./model/User"); 
 
 // Forgot Password Page
 app.get("/forgot-password", (req, res) => {
