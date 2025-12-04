@@ -15,14 +15,23 @@
     </div>
 
     <nav>
-      <a href="/" class="<%= activePage === 'home' ? 'active' : '' %>">Home</a>
-      <a href="/create" class="<%= activePage === 'create' ? 'active' : '' %>">Log New Trip</a>
-      <a href="/trucks" class="<%= activePage === 'trucks' ? 'active' : '' %>">View Active Trip</a>
+      <% if (!User) { %>
+          <a href="/login" class="auth-link">Login</a>
+          <a href="/auth/google" class="hero-btn google-btn">Sign in with Google</a>
+          <a href="/signup" class="auth-link">Register</a>
+      <% } else { %>
+          <span class="user-name">Welcome, <%= User.fullName %></span>
+          <a href="/" class="<%= activePage === 'home' ? 'active' : '' %>">Home</a>
+          <a href="/create" class="<%= activePage === 'create' ? 'active' : '' %>">Log New Trip</a>
+          <a href="/trucks" class="<%= activePage === 'trucks' ? 'active' : '' %>">View Active Trips</a>
+          <a href="/logout" class="auth-link logout">Logout</a>
+      <% } %>
     </nav>
   </header>
 
 
-  <main class="page-content">
+  
+<main class="page-content">
     <div class="table-container">
 
       <% if (message) { %>
@@ -44,7 +53,8 @@
             <th>Scheduled Departure</th>
             <th>Estimated Arrival</th>
             <th>Status</th>
-            <th>Cargo Type</th>
+  
+           <th>Cargo Type</th>
             <th>Weight (kg)</th>
             <th>Actions</th>
           </tr>
@@ -66,7 +76,8 @@
 
                 
                 <td><%= truck.tripName %></td>
-                <td><%= truck.truckId %></td>
+     
+               <td><%= truck.truckId %></td>
                 <td>
                   <% if (truck.user && truck.user.fullName) { %>
                     <%= truck.user.fullName %>
@@ -83,7 +94,8 @@
                   <% } %>
                 </td>
 
-                <td>
+     
+               <td>
                   <% if (truck.estimatedArrival) { %>
                     <%= truck.estimatedArrival.toISOString().substring(0, 10) %>
                   <% } else { %>
@@ -100,7 +112,8 @@
                 <td><%= truck.cargoType %></td>
                 <td><%= truck.weightKg %></td>
 
-                <td>
+    
+               <td>
                   <a href="/edit-trip/<%= truck._id %>" class="table-link">View / Edit</a>
                 </td>
 

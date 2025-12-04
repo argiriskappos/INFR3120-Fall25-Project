@@ -54,34 +54,6 @@ app.set("views", path.join(__dirname, "views"));
 // Static Folder
 app.use(express.static(path.join(__dirname, "public")));
 
-// Login Page
-app.get("/login", (req, res) => {
-  res.render("login", { error: null });
-});
-
-// User Login Route
-app.post("/login", passport.authenticate("local", {
-    successRedirect: "/",
-    failureRedirect: "/login",
-    failureFlash: true
-  }), (req, res) => {
-    if (req.isAuthenticated()) {
-      res.redirect("/");
-    } else {
-      res.redirect("/login");
-    }
-  }
-);
-
-// Logout
-app.get("/logout", (req, res) => {
-  req.session.destroy(() => {
-    res.redirect("/");
-  });
-});
-
-// App routes
-app.use("/", truckRoutes);
 
 // Home page
 app.get(["/", "/index"], (req, res) => {
@@ -90,6 +62,10 @@ app.get(["/", "/index"], (req, res) => {
     activePage: "home"
   });
 });
+
+// App routes
+app.use("/", truckRoutes);
+
 
 const User = require("./model/User"); 
 
