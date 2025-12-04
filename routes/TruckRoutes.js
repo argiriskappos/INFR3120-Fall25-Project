@@ -31,7 +31,7 @@ router.get('/login', (req, res) => {
 router.post('/login',
     // Call the local passport strategy
     passport.authenticate('local', {
-        successRedirect: '/trucks', 
+        successRedirect: '/index', 
         failureRedirect: '/login?error=Invalid%20Email%20or%20Password.',
         failureFlash: false 
     })
