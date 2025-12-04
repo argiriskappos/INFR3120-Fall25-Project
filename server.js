@@ -51,23 +51,25 @@ app.use((req, res, next) => {
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// Static files
+// Static Folder
 app.use(express.static(path.join(__dirname, "public")));
 
-// Google OAuth routes
-app.get(
-  "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
+// Login Page
+app.get("/login", (req, res) => {
+  res.render("login", { error: null });
+});
 
-app.get(
-  "/auth/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: "/login"
-  }),
-  (req, res) => {
-    req.session.User = req.user;
-    res.redirect("/");
+// User Login Route
+app.post("/login", passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/login",
+    failureFlash: true
+  }), (req, res) => {
+    if (req.isAuthenticated()) {
+      res.redirect("/");
+    } else {
+      res.redirect("/login");
+    }
   }
 );
 
@@ -115,17 +117,21 @@ app.post("/reset-password", async (req, res) => {
   if (newPassword !== confirmPassword) {
     return res.render("resetPassword", { userId, error: "Passwords do not match." });
   }
-
   if (newPassword.length < 6) {
-    return res.render("resetPassword", { userId, error: "Password must be at least 6 characters long." });
+    return res.render("resetPassword", { userId, error: "Password must be at least 6 characters." });
   }
 
-  await User.findByIdAndUpdate(userId, { password: newPassword });
+  const user = await User.findById(userId);
 
-  return res.redirect("/login");
+  if (!user) {
+    return res.render("resetPassword", { userId, error: "User not found." });
+  }
+
+  user.password = newPassword;
+  await user.save();
+  
+  // Successful reset
+  res.render("login", { error: "Your password has been reset successfully. Please log in." });
 });
 
-// Start
-app.listen(PORT, () => {
-  console.log(`Running at http://localhost:${PORT}`);
-});
+app.listen(PORT, console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`));
