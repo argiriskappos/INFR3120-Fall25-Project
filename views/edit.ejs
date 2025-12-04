@@ -29,8 +29,8 @@
           </div>
 
           <div class="form-group">
-              <label for="driverName">Driver Name</label>
-              <input type="text" id="driverName" name="driverName" value="<%= trip.driverName %>">
+              <label for="driverName">Driver Name <span class="required-star">*</span></label>
+              <input type="text" id="driverName" name="driverName" value="<%= trip.driverName %>" required>
           </div>
    
         
@@ -42,10 +42,11 @@
  new Date(trip.scheduledDeparture).toISOString().slice(0, 10) %>" required>
               </div>
               <div class="form-group">
-                  <label for="estimatedArrival">Estimated Arrival</label>
+                  <label for="estimatedArrival">Estimated Arrival <span class="required-star">*</span></label>
+                  <!-- FIX: Added 'required' attribute to prevent Mongoose validation failure -->
                   <input type="date" id="estimatedArrival" name="estimatedArrival" 
                       value="<%= trip.estimatedArrival ?
- new Date(trip.estimatedArrival).toISOString().slice(0, 10) : '' %>">
+ new Date(trip.estimatedArrival).toISOString().slice(0, 10) : '' %>" required>
               </div>
           </div>
 
@@ -64,8 +65,8 @@
               </div>
           
           <div class="form-group">
-                  <label for="cargoType">Cargo Type</label>
-                  <select id="cargoType" name="cargoType">
+                  <label for="cargoType">Cargo Type <span class="required-star">*</span></label>
+                  <select id="cargoType" name="cargoType" required>
                       <option value="General" <%= trip.cargoType === 'General' ?
  'selected' : '' %>>General Freight</option>
                       <option value="Refrigerated" <%= trip.cargoType === 'Refrigerated' ?
@@ -99,8 +100,6 @@
 
       <div style="text-align: right; margin-top: 20px;">
           <form action="/delete-trip/<%= trip._id %>" method="POST" style="display: inline-block;">
-              <input type="hidden" 
- name="_method" value="DELETE">
               <button type="submit" class="submit-btn delete-btn" onclick="return confirm('Are you sure you want to delete this trip?');">
                   Delete Trip
               </button>
