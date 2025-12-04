@@ -1,14 +1,15 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
-// Define the User Schema
+
 const UserSchema = new mongoose.Schema({
     email: {
         type: String,
         required: [true, 'Email is required.'],
-        unique: true, // Ensures no two users can register with the same email
+        unique: true,
         trim: true,
         lowercase: true,
-        match: [/.+@.+\..+/, 'Please enter a valid email address.'] // email format validation
+        match: [/.+@.+\..+/, 'Please enter a valid email address.']
     },
     password: {
         type: String,
@@ -23,9 +24,30 @@ const UserSchema = new mongoose.Schema({
         type: String,
         enum: ['Driver', 'Dispatcher', 'Admin'],
         default: 'Driver'
+    },
+    profileImage: {
+        type: String,
+        default: '/images/default-user.png' 
     }
 }, {
-    timestamps: true // Adds createdAt and updatedAt fields
+    timestamps: true
 });
+
+
+UserSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) return next();
+
+    try {
+        this.password = await bcrypt.hash(this.password, 10);
+        next();
+    } catch (err) {
+        next(err);
+    }
+});
+
+
+UserSchema.methods.comparePassword = async function (candidatePassword) {
+    return bcrypt.compare(candidatePassword, this.password);
+};
 
 module.exports = mongoose.model('User', UserSchema);
