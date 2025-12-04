@@ -131,7 +131,9 @@ router.get('/trucks', ensureAuth, async (req, res) => {
     try {
         // Fetch all trips from all users
         const trips = await Truck.find({})
-            .populate('user') 
+            // FIX: Removed .populate('user') to prevent crashes 
+            // caused by invalid/missing user IDs in the database.
+            // The display will now rely on truck.driverName if truck.user.fullName is unavailable.
             .sort({ scheduledDeparture: 'desc' }) // Sort by departure date
             .lean(); 
 
@@ -143,8 +145,9 @@ router.get('/trucks', ensureAuth, async (req, res) => {
             error: req.query.error || null
         });
     } catch (err) {
-        console.error('Error fetching trips:', err);
-        // Redirect to a safe page on a server error instead of throwing a raw 500 page
+        console.error('Error fetching trips for /trucks route:', err);
+        // This catch block executes when the Mongoose query fails (likely due to invalid IDs)
+        // and redirects to home. Removing .populate should fix this.
         res.redirect('/?error=Failed%20to%20load%20trip%20data%20due%20to%20a%20server%20error.');
     }
 });

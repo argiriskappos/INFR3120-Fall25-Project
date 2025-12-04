@@ -54,7 +54,6 @@ app.set("views", path.join(__dirname, "views"));
 // Static Folder
 app.use(express.static(path.join(__dirname, "public")));
 
-
 // Home page
 app.get(["/", "/index"], (req, res) => {
   res.render("index", {
@@ -63,7 +62,7 @@ app.get(["/", "/index"], (req, res) => {
   });
 });
 
-// App routes
+// App routes - This mounts all the routes from TruckRoutes.js (including all authentication)
 app.use("/", truckRoutes);
 
 
