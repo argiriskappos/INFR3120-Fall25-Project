@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Fleet Operations Tracker |
+{{ title }}</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+<header>
+  <div class="logo">
+    <img src="/img/logo.jpg" alt="Team Logo">
+    <h1>Fleet Operations Tracker</h1>
+  </div>
+
+  <nav>
+
+    <ng-container *ngIf="!User">
+        <a href="/login" class="auth-link">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </a>
+
+        <a href="/auth/google" class="hero-btn google-btn">
+          <i class="fab fa-google"></i> Sign in with Google
+        </a>
+
+        <a href="/signup" class="auth-link">
+          <i class="fas fa-user-plus"></i> Register
+        </a>
+
+    </ng-container>
+
+    <ng-container *ngIf="User">
+        <span class="user-name">
+          <i class="fas fa-user-circle"></i> Welcome, {{ User.fullName }}
+        </span>
+
+        <a href="/" [class.active]="activePage === 'home'">
+          <i class="fas fa-home"></i> Home
+        </a>
+
+        <a href="/create" [class.active]="activePage === 'create'">
+          <i class="fas fa-plus-circle"></i> Log New Trip
+        </a>
+
+        <a href="/trucks" [class.active]="activePage === 'trucks'">
+          <i class="fas fa-truck"></i> View Active Trips
+        </a>
+
+        <a href="/logout" class="auth-link logout">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+
+    </ng-container>
+
+  </nav>
+</header>
+
+<main class="page-content">
+
+  <section class="hero">
+    <h2>Centralized Fleet and Trip Management</h2>
+    <p>Log new journeys, track vehicle status, and manage cargo manifests across your entire fleet operations.</p>
+
+    <div class="hero-buttons">
+      <ng-container *ngIf="!User">
+        <a href="/login" class="hero-btn primary">+ Login</a>
+        <a href="/signup" class="hero-btn secondary">Sign Up</a>
+      </ng-container>
+      <ng-container *ngIf="User">
+        <a href="/create" class="hero-btn primary">+ Log New Trip</a>
+        <a href="/trucks" class="hero-btn secondary">View Active Trips</a>
+      </ng-container>
+    </div>
+  </section>
+
+  <section class="info-grid">
+    <div class="info-card">
+      <h3>Real-time Tracking</h3>
+      <p>Monitor the current location and status of all active vehicles to ensure timely deliveries and optimize routes.</p>
+    </div>
+
+    <div class="info-card">
+      <h3>Manifest Documentation</h3>
+      <p>Securely record and manage detailed cargo manifests, weights, and handling instructions for every journey.</p>
+    </div>
+
+    <div class="info-card">
+      <h3>Compliance & Safety</h3>
+      <p>Keep digital records of trip logs and vehicle assignments to maintain regulatory compliance and high safety standards.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>&copy; 2025 Fleet Operations Tracker Project. INFR3120.</p>
+</footer>
+
+</body>
+
+</html>

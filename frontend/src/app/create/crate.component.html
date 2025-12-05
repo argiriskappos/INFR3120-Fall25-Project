@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Fleet Operations Tracker |
+{{ title }}</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <link rel="stylesheet" href="/css/form_style.css">
+</head>
+
+<body>
+
+<header>
+  <div class="logo">
+    <img src="/img/logo.jpg" alt="Team Logo">
+    <h1>Fleet Operations Tracker</h1>
+  </div>
+
+  <nav>
+
+    <ng-container *ngIf="!User">
+      <a href="/login" class="auth-link">
+        <i class="fas fa-sign-in-alt"></i> Login
+      </a>
+
+      <a href="/auth/google" class="hero-btn google-btn">
+        <i class="fab fa-google"></i> Sign
+in with Google
+      </a>
+
+      <a href="/signup" class="auth-link">
+        <i class="fas fa-user-plus"></i> Register
+      </a>
+
+    </ng-container>
+
+    <ng-container *ngIf="User">
+
+      <span class="user-name">
+        <i class="fas fa-user-circle"></i> Welcome, {{ User.fullName }}
+      </span>
+
+      <a href="/" [class.active]="activePage === 'home'">
+        <i class="fas fa-home"></i> Home
+      </a>
+
+      <a href="/create" [class.active]="activePage === 'create'">
+        <i class="fas fa-plus-circle"></i> Log New Trip
+      </a>
+
+      <a href="/trucks" [class.active]="activePage === 'trucks'">
+        <i class="fas fa-truck"></i> View Active Trips
+      </a>
+
+      <a href="/logout" class="auth-link logout">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </a>
+
+    </ng-container>
+
+  </nav>
+</header>
+
+<main class="page-content">
+  <div class="form-container sign-up-form">
+    <h2>Log New Trip & Cargo Manifest</h2>
+
+    <form (ngSubmit)="logTrip()" [action]="'/create'" method="POST">
+
+      <h3>Trip Details</h3>
+
+      <div
+class="form-row">
+        <div class="form-group">
+          <label>Truck / Unit Number *</label>
+          <input type="text" name="truckId" required placeholder="e.g., TRK-301">
+        </div>
+
+        <div class="form-group">
+          <label>Driver Name *</label>
+          <input type="text" name="driverName" required placeholder="e.g., John Smith">
+        </div>
+      </div>
+
+
+      <div class="form-group">
+        <label>Status *</label>
+        <select name="status" required>
+          <option value="Scheduled">Scheduled</option>
+          <option value="In Transit">In Transit</option>
+          <option value="Delayed">Delayed</option>
+          <option value="Delivered">Delivered</option>
+        </select>
+      </div>
+
+      <h3>Scheduling</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Scheduled Departure Date *</label>
+          <input type="date" name="scheduledDeparture" required>
+        </div>
+
+        <div class="form-group">
+          <label>Estimated Arrival Date *</label>
+          <input type="date" name="estimatedArrival" required>
+        </div>
+      </div>
+
+      <h3>Cargo & Manifest Details</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Primary Cargo Type *</label>
+          <select name="cargoType" required>
+            <option value="">-- Select Cargo Type --</option>
+
+            <option value="General Freight">
+              General Freight
+            </option>
+
+            <option value="Refrigerated Goods (Perishables)">
+              Refrigerated Goods (Perishables)
+            </option>
+
+            <option value="Bulk Liquid">
+              Bulk Liquid
+            </option>
+
+            <option value="Hazardous Materials">
+              Hazardous Materials
+            </option>
+
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Total Weight (kg)</label>
+          <input type="number" name="weightKg" placeholder="e.g., 25000" min="0">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Manifest Summary *</label>
+        <textarea name="manifestSummary" rows="4" required
+          placeholder="List bill of lading numbers, item specifics, or any special route instructions."></textarea>
+      </div>
+
+      <div class="form-group" style="text-align: right; padding-top: 15px;">
+        <button type="submit" class="submit-btn primary">
+          Log Trip & Create Manifest
+        </button>
+      </div>
+
+    </form>
+  </div>
+</main>
+
+<footer>
+  <p>&copy; 2025 Fleet Operations Tracker Project. INFR3120.</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Fleet Operations Tracker |
+{{ title }}</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <link rel="stylesheet" href="/css/form_style.css">
+</head>
+
+<body>
+
+<header>
+  <div class="logo">
+    <img src="/img/logo.jpg" alt="Team Logo">
+    <h1>Fleet Operations Tracker</h1>
+  </div>
+
+  <nav>
+    <ng-container *ngIf="!User">
+      <a href="/login" class="auth-link"><i class="fas fa-sign-in-alt"></i> Login</a>
+      <a href="/auth/google" class="hero-btn google-btn"><i class="fab fa-google"></i> Google</a>
+      <a href="/signup" class="auth-link"><i class="fas fa-user-plus"></i> Register</a>
+    </ng-container>
+    <ng-container *ngIf="User">
+      <span class="user-name"><i class="fas fa-user-circle"></i> {{ User.fullName }}</span>
+      <a href="/" [class.active]="activePage === 'home'"><i class="fas fa-home"></i> Home</a>
+      <a href="/create" [class.active]="activePage === 'create'"><i class="fas fa-plus-circle"></i> Log</a>
+      <a href="/trucks" [class.active]="activePage === 'trucks'"><i class="fas fa-truck"></i> Trips</a>
+      <a href="/logout" class="auth-link logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </ng-container>
+  </nav>
+</header>
+
+<div class="message-box error-box" *ngIf="error">{{ error }}</div>
+
+<div class="form-container">
+  <h2>Editing Trip: {{ trip.tripName }} ({{ trip.truckId }})</h2>
+  <p>Trip ID: {{ trip._id }}</p>
+
+  <form (ngSubmit)="updateTrip()" [action]="'/update-trip/' + trip._id" method="POST">
+
+    <h3>Trip Details</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Trip Name *</label>
+        <input type="text" name="tripName" [value]="trip.tripName" required>
+      </div>
+
+      <div class="form-group">
+        <label>Truck ID *</label>
+        <input type="text" name="truckId" [value]="trip.truckId" required>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Driver Name *</label>
+        <input type="text" name="driverName" [value]="trip.driverName" required>
+      </div>
+
+      <div class="form-group">
+        <label>Status *</label>
+        <select name="status" required>
+          <option value="Scheduled" [selected]="trip.status === 'Scheduled'">Scheduled</option>
+          <option value="In Transit" [selected]="trip.status === 'In Transit'">In Transit</option>
+          <option value="Delayed" [selected]="trip.status === 'Delayed'">Delayed</option>
+          <option value="Delivered" [selected]="trip.status === 'Delivered'">Delivered</option>
+        </select>
+      </div>
+    </div>
+
+    <h3>Scheduling</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Scheduled Departure Date *</label>
+        <input type="date" name="scheduledDeparture" [value]="trip.scheduledDeparture" required>
+      </div>
+
+      <div class="form-group">
+        <label>Estimated Arrival Date *</label>
+        <input type="date" name="estimatedArrival" [value]="trip.estimatedArrival" required>
+      </div>
+    </div>
+
+    <h3>Cargo & Manifest Details</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Primary Cargo Type *</label>
+        <select name="cargoType" required>
+          <option value="General Freight" [selected]="trip.cargoType === 'General Freight'">General Freight</option>
+          <option value="Refrigerated Goods (Perishables)" [selected]="trip.cargoType === 'Refrigerated Goods (Perishables)'">Refrigerated Goods (Perishables)</option>
+          <option value="Bulk Liquid" [selected]="trip.cargoType === 'Bulk Liquid'">Bulk Liquid</option>
+          <option value="Hazardous Materials" [selected]="trip.cargoType === 'Hazardous Materials'">Hazardous Materials</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Total Weight (kg)</label>
+        <input type="number" name="weightKg" [value]="trip.weightKg" min="0">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Manifest Summary *</label>
+      <textarea name="manifestSummary" rows="4" required [value]="trip.manifestSummary"></textarea>
+    </div>
+
+    <div class="form-group action-buttons">
+      <a href="/trucks" class="submit-btn secondary">Cancel</a>
+      <button type="submit" class="submit-btn primary">Save Changes</button>
+      <button type="button" id="deleteButton" class="submit-btn delete-btn">Delete Trip</button>
+    </div>
+
+  </form>
+</div>
+
+<div id="confirmationModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h3>Delete this trip?</h3>
+
+    <form id="deleteForm" [action]="'/delete-trip/' + trip._id" method="POST"></form>
+
+    <button id="confirmDelete" class="submit-btn delete-btn">Yes</button>
+    <button id="cancelDelete" class="submit-btn secondary">Cancel</button>
+  </div>
+</div>
+
+<script>
+  const deleteButton = document.getElementById('deleteButton');
+  const deleteForm = document.getElementById('deleteForm');
+  const modal = document.getElementById('confirmationModal');
+  const confirmDelete = document.getElementById('confirmDelete');
+  const cancelDelete = document.getElementById('cancelDelete');
+
+  deleteButton.onclick = () => modal.style.display = 'block';
+  cancelDelete.onclick = () => modal.style.display = 'none';
+  confirmDelete.onclick = () => deleteForm.submit();
+</script>
+
+<footer>
+  <p>&copy; 2025 Fleet Operations Tracker Project. INFR3120.</p>
+</footer>
+
+</body>
+</html>
