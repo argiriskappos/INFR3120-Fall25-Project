@@ -3,101 +3,172 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Fleet Operations Tracker | <%= title %></title>
-  <link rel="stylesheet" href="/css/form_style.css" />
+
+  <!-- FONT AWESOME FOR ICONS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/form_style.css">
 </head>
+
 <body>
-  <header>
-    <div class="logo">
-      <img src="/img/logo.jpg" alt="Team Logo" />
-      <h1>Fleet Operations Tracker</h1>
-    </div>
-    <nav>
-      <% if (!User) { %>
-          <!-- When NOT logged in -->
-          <a href="/login" class="auth-link">Login</a>
-          <a href="/auth/google" class="hero-btn google-btn">Sign in with Google</a>
-          <a href="/signup" class="auth-link">Register</a>
-      <% } else { %>
-          <!-- When logged in -->
-          <span class="user-name">Welcome, <%= User.fullName %></span>
-          <a href="/" class="<%= activePage === 'home' ? 'active' : '' %>">Home</a>
-          <a href="/create" class="<%= activePage === 'create' ? 'active' : '' %>">Log New Trip</a>
-          <a href="/trucks" class="<%= activePage === 'trucks' ? 'active' : '' %>">View Active Trips</a>
-          <a href="/logout" class="auth-link logout">Logout</a>
-      <% } %>
-    </nav>
-  </header>
 
-  <main class="page-content">
-    <div class="form-container sign-up-form">
-      <h2>Log New Trip & Cargo Manifest</h2>
-      <form id="tripLogForm" action="/create" method="POST">
-          
-          <div class="form-row">
-            <div class="form-group">
-              <label for="unitNumber">Truck / Unit Number <span class="required-star">*</span></label>
-              <input type="text" id="unitNumber" name="truckId" required placeholder="e.g., TRK-301">
-            </div>
-            <div class="form-group">
-              <label for="driverName">Driver Name <span class="required-star">*</span></label>
-              <input type="text" id="driverName" name="driverName" required placeholder="e.g., John Smith">
-            </div>
-          </div>
+<header>
+  <div class="logo">
+    <img src="/img/logo.jpg" alt="Team Logo">
+    <h1>Fleet Operations Tracker</h1>
+  </div>
 
-          <h3>Route Details</h3>
+  <!-- NAV bar -->
+  <nav>
 
-          <div class="form-group">
-            <label for="tripName">Trip Name / Route Title <span class="required-star">*</span></label>
-            <input type="text" id="tripName" name="tripName" required placeholder="e.g., Toronto to Warehouse Z">
-          </div>
-          
-          <div class="form-row">
-            <div class="form-group">
-              <label for="scheduledDeparture">Scheduled Departure Time <span class="required-star">*</span></label>
-              <input type="datetime-local" id="scheduledDeparture" name="scheduledDeparture" required>
-            </div>
-            <div class="form-group">
-              <label for="estimatedArrival">Estimated Arrival Time <span class="required-star">*</span></label>
-              <input type="datetime-local" id="estimatedArrival" name="estimatedArrival" required>
-            </div>
-          </div>
+    <% if (!User) { %>
+      <a href="/login" class="auth-link">
+        <i class="fas fa-sign-in-alt"></i> Login
+      </a>
 
-          <h3>Cargo Details (Manifest)</h3>
+      <a href="/auth/google" class="hero-btn google-btn">
+        <i class="fab fa-google"></i> Sign in with Google
+      </a>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label for="cargoType">Primary Cargo Type <span class="required-star">*</span></label>
-              <select id="cargoType" name="cargoType" required>
-                <option value="">-- Select Cargo Type --</option>
-                <option value="General Freight">General Freight</option>
-                <option value="Perishables">Refrigerated Goods (Perishables)</option>
-                <option value="Bulk Liquid">Bulk Liquid</option>
-                <option value="Hazardous">Hazardous Materials</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="weightKg">Total Weight (kg)</label>
-              <input type="number" id="weightKg" name="weightKg" placeholder="e.g., 25000" min="0">
-            </div>
-          </div>
+      <a href="/signup" class="auth-link">
+        <i class="fas fa-user-plus"></i> Register
+      </a>
 
-          <div class="form-group">
-            <label for="manifestSummary">Manifest Summary / Details <span class="required-star">*</span></label>
-            <textarea id="manifestSummary" name="manifestSummary" rows="4" required placeholder="List bill of lading numbers, item specifics, or any special route instructions."></textarea>
-          </div>
-          
-          <div class="form-group" style="text-align: right; padding-top: 15px;">
-            <button type="submit" class="submit-btn primary">
-              Log Trip & Create Manifest
-            </button>
-          </div>
-      </form>
-    </div>
-  </main>
-  
-  <footer>
-    <p>&copy; 2025 Fleet Operations Tracker Project. INFR3120.</p>
-  </footer>
+    <% } else { %>
+
+      <span class="user-name">
+        <i class="fas fa-user-circle"></i> Welcome, <%= User.fullName %>
+      </span>
+
+      <a href="/" class="<%= activePage === 'home' ? 'active' : '' %>">
+        <i class="fas fa-home"></i> Home
+      </a>
+
+      <a href="/create" class="<%= activePage === 'create' ? 'active' : '' %>">
+        <i class="fas fa-plus-circle"></i> Log New Trip
+      </a>
+
+      <a href="/trucks" class="<%= activePage === 'trucks' ? 'active' : '' %>">
+        <i class="fas fa-truck"></i> View Active Trips
+      </a>
+
+      <a href="/logout" class="auth-link logout">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </a>
+
+    <% } %>
+
+  </nav>
+</header>
+
+<main class="page-content">
+  <div class="form-container sign-up-form">
+    <h2>Log New Trip & Cargo Manifest</h2>
+
+    <form id="tripLogForm" action="/create" method="POST">
+
+      <!-- TRIP DETAILS -->
+      <h3>Trip Details</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Truck / Unit Number *</label>
+          <input type="text" name="truckId" required placeholder="e.g., TRK-301">
+        </div>
+
+        <div class="form-group">
+          <label>Driver Name *</label>
+          <input type="text" name="driverName" required placeholder="e.g., John Smith">
+        </div>
+      </div>
+
+      <!-- STATUS -->
+      <div class="form-group">
+        <label>Status *</label>
+        <select name="status" required>
+          <option value="Scheduled" selected>Scheduled</option>
+          <option value="In Transit">In Transit</option>
+          <option value="Delayed">Delayed</option>
+          <option value="Delivered">Delivered</option>
+        </select>
+      </div>
+
+      <!-- ROUTE DETAILS -->
+      <h3>Route Details</h3>
+
+      <div class="form-group">
+        <label>Trip Name / Route Title *</label>
+        <input type="text" name="tripName" required placeholder="e.g., Toronto to Warehouse Z">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Scheduled Departure *</label>
+          <input type="datetime-local" name="scheduledDeparture" required>
+        </div>
+
+        <div class="form-group">
+          <label>Estimated Arrival *</label>
+          <input type="datetime-local" name="estimatedArrival" required>
+        </div>
+      </div>
+
+      <!-- CARGO DETAILS -->
+      <h3>Cargo Details (Manifest)</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Primary Cargo Type *</label>
+          <select name="cargoType" required>
+            <option value="">-- Select Cargo Type --</option>
+
+            <option value="General Freight">
+              General Freight
+            </option>
+
+            <option value="Refrigerated Goods (Perishables)">
+              Refrigerated Goods (Perishables)
+            </option>
+
+            <option value="Bulk Liquid">
+              Bulk Liquid
+            </option>
+
+            <option value="Hazardous Materials">
+              Hazardous Materials
+            </option>
+
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Total Weight (kg)</label>
+          <input type="number" name="weightKg" placeholder="e.g., 25000" min="0">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Manifest Summary *</label>
+        <textarea name="manifestSummary" rows="4" required
+          placeholder="List bill of lading numbers, item specifics, or any special route instructions."></textarea>
+      </div>
+
+      <div class="form-group" style="text-align: right; padding-top: 15px;">
+        <button type="submit" class="submit-btn primary">
+          Log Trip & Create Manifest
+        </button>
+      </div>
+
+    </form>
+  </div>
+</main>
+
+<footer>
+  <p>&copy; 2025 Fleet Operations Tracker Project. INFR3120.</p>
+</footer>
+
 </body>
 </html>
