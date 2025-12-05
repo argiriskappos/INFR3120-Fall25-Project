@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
-import { TrucksService } from '../services/trucks.service';
-import { User } from '../models/user.model';
+import { AuthService } from '../services/auth.services';
+import { TrucksService } from '../services/truck.services';
+import { User } from '../models/user.models';
+import { TripCreationPayload } from '../models/trip.models'; // Import the new type
 
 @Component({
   selector: 'app-create',
   templateUrl: './create.component.html',
-  styleUrls: ['../../../public/css/form_style.css'], // Adjust path if needed
+  styleUrls: ['/src/css/form_style.css'], // Adjust path if needed
 })
 export class CreateComponent implements OnInit {
   title = 'Log New Trip';
@@ -16,7 +17,8 @@ export class CreateComponent implements OnInit {
   error: string | null = null;
   success: string | null = null;
 
-  tripData = {
+  // Explicitly type tripData using the payload interface
+  tripData: TripCreationPayload = {
     tripName: '',
     truckId: '',
     driverName: '',
@@ -27,7 +29,7 @@ export class CreateComponent implements OnInit {
     cargoType: '',
     weightKg: 0,
     manifestSummary: '',
-    status: 'Scheduled'
+    status: 'Scheduled' // This is now correctly typed as 'Scheduled' | 'In-Transit' | 'Completed' | 'Delayed'
   };
 
   constructor(
@@ -53,8 +55,8 @@ export class CreateComponent implements OnInit {
     this.error = null;
     this.success = null;
 
-    // Convert string dates to ISO format if needed, though most backends handle YYYY-MM-DD
-    const payload = {
+    // The payload now correctly inherits the required types from TripCreationPayload
+    const payload: TripCreationPayload = {
         ...this.tripData,
         weightKg: Number(this.tripData.weightKg) // Ensure weight is a number
     };
@@ -64,8 +66,23 @@ export class CreateComponent implements OnInit {
         this.error = response.error;
       } else {
         this.success = 'Trip logged successfully!';
-        // Reset form for new entry or redirect
-        this.tripData = { ...this.tripData, tripName: '', truckId: '', routeStart: '', routeEnd: '', scheduledDeparture: '', estimatedArrival: '', cargoType: '', weightKg: 0, manifestSummary: '' };
+        
+        // Reset form for new entry, ensuring `status` remains correctly typed.
+        this.tripData = {
+            tripName: '',
+            truckId: '',
+            // Keep the driverName pre-filled if a user is logged in
+            driverName: this.User ? this.User.fullName : '', 
+            routeStart: '',
+            routeEnd: '',
+            scheduledDeparture: '',
+            estimatedArrival: '',
+            cargoType: '',
+            weightKg: 0,
+            manifestSummary: '',
+            status: 'Scheduled' 
+        };
+        
         // Redirect after a short delay
         setTimeout(() => this.router.navigate(['/trucks']), 1500);
       }

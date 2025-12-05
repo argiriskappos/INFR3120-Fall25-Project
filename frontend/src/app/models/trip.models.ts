@@ -1,4 +1,6 @@
-import { User } from './user.model';
+import { User } from './user.models';
+
+export type TripStatus = 'Scheduled' | 'In-Transit' | 'Completed' | 'Delayed';
 
 export interface Trip {
   _id: string;
@@ -12,6 +14,9 @@ export interface Trip {
   cargoType: string;
   weightKg: number;
   manifestSummary: string;
-  status: 'Scheduled' | 'In-Transit' | 'Completed' | 'Delayed';
+  status: TripStatus; // Use the defined union type
   user?: User; // Optional user object if populated
 }
+
+// Define the structure for creating a new trip (doesn't include _id or user)
+export type TripCreationPayload = Omit<Trip, '_id' | 'user'>;

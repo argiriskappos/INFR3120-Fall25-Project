@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
-import { TrucksService } from '../services/trucks.service';
-import { User } from '../models/user.model';
-import { Trip } from '../models/trip.model';
+import { AuthService } from '../services/auth.services';
+import { TrucksService } from '../services/truck.services';
+import { User } from '../models/user.models';
+import { Trip } from '../models/trip.models';
 
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
-  styleUrls: ['../../../public/css/form_style.css'], // Adjust path if needed
+  styleUrls: ['/src/css/form_style.css'], // Adjust path if needed
 })
 export class EditComponent implements OnInit {
   title = 'Edit Trip';
