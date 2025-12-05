@@ -1,0 +1,248 @@
+/* Page layout */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f4f6f9;
+  color: #2f3640;
+  padding-bottom: 45px;
+}
+
+/* Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #273c75;
+  color: white;
+  padding: 15px 40px;
+}
+
+header .logo {
+  display: flex;
+  align-items: center;
+}
+
+header .logo img {
+  width: 50px;
+  height: 50px;
+  margin-right: 15px;
+}
+
+/* Navigation links */
+nav a {
+  position: relative;
+  color: #ffffff;
+  text-decoration: none;
+  margin-left: 15px;
+  font-weight: bold;
+  padding: 10px 16px;
+  border-radius: 8px;
+  transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
+}
+
+nav a:hover {
+  background-color: #4da3ff;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(77, 163, 255, 0.6);
+}
+
+nav a.active {
+  background-color: #2196f3;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 0 14px rgba(33, 150, 243, 0.8);
+}
+
+nav a::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  width: 0%;
+  height: 3px;
+  background: #ffffff;
+  border-radius: 2px;
+  transition: width 0.25s ease, left 0.25s ease;
+}
+
+nav a:hover::after,
+nav a.active::after {
+  width: 80%;
+  left: 10%;
+}
+
+nav a.active i {
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+/* Form container */
+.form-container {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  margin: 30px auto;
+  max-width: 800px;
+  width: 90%;
+}
+
+.form-container h2 {
+  color: #273c75;
+  margin-bottom: 25px;
+  border-bottom: 2px solid #ebf1f5;
+  padding-bottom: 10px;
+  font-size: 1.8em;
+}
+
+/* Form fields */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #2f3640;
+  font-size: 1.05em;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #bdc3c7;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 16px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #273c75;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(39, 60, 117, 0.2);
+}
+
+/* Required fields */
+.required-star {
+  color: #e74c3c;
+  margin-left: 5px;
+  font-weight: bold;
+}
+
+/* Action buttons */
+.action-buttons {
+  display: flex;
+  justify-content: flex-start;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.submit-btn {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.1s;
+}
+
+.submit-btn.primary {
+  background-color: #273c75;
+  color: white;
+}
+
+.submit-btn.primary:hover {
+  background-color: #192a56;
+  transform: translateY(-1px);
+}
+
+.submit-btn.delete-btn {
+  background-color: #c0392b;
+  color: white;
+}
+
+.submit-btn.delete-btn:hover {
+  background-color: #e74c3c;
+  transform: translateY(-1px);
+}
+
+/* Toast message */
+#toast-message {
+  visibility: hidden;
+  min-width: 250px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 8px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1000;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 30px;
+  font-size: 17px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: visibility 0.3s, opacity 0.3s;
+  opacity: 0;
+}
+
+#toast-message.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Confirmation modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  z-index: 9999;
+}
+
+.modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 350px;
+  width: 90%;
+}
+
+/* Error messages */
+.message-box.error-box {
+  color: #d63031;
+  background-color: #ffdae0;
+  border: 1px solid #d63031;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 8px 0;
+  background: #273c75;
+  color: white;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  font-size: 14px;
+}
