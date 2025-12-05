@@ -1,12 +1,18 @@
-// frontend/src/app/app.component.ts
+// src/app/app.component.ts
 
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
-  selector: 'app-root', // This tag is what goes in your main index.html file
+  selector: 'app-root',
+  standalone: true,
+  imports: [
+    CommonModule, 
+    RouterOutlet // Required to render nested components
+  ],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.css'] // Or just ['./app.component.css'] if it exists
 })
 export class AppComponent {
-  title = 'frontend';
+  title = 'Fleet Operations Tracker';
 }

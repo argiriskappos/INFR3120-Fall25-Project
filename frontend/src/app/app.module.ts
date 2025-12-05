@@ -1,26 +1,27 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http'; // <-- Required for API calls to Render
-import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // <-- Required for form handling
+// HttpClientModule removed to address deprecation warning. 
+// You must now add provideHttpClient() to your main.ts/app.config.ts file.
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'; 
 
+// Core Angular Modules
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-// --- Import All Your Components ---
+// Component Imports
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
-import { TrucksComponent } from './trucks/trucks.component';
+import { TrucksComponent } from './trucks/trucks.component'; 
 import { CreateComponent } from './create/create.component';
 import { EditComponent } from './edit/edit.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
-// ---------------------------------
 
 @NgModule({
   declarations: [
     AppComponent,
-    // --- Declare All Components ---
+    // Declare All Components
     HomeComponent,
     LoginComponent,
     SignUpComponent,
@@ -29,14 +30,13 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
     EditComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,
-    // ---------------------------------
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule, // Enables Angular's HTTP client for API communication
-    FormsModule, // For template-driven forms
-    ReactiveFormsModule // For model-driven forms
+    // HttpClientModule REMOVED
+    FormsModule, 
+    ReactiveFormsModule 
   ],
   providers: [],
   bootstrap: [AppComponent]

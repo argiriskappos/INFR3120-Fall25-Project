@@ -5,8 +5,7 @@
   </div>
 
   <nav>
-
-    <ng-container *ngIf="!User">
+    @if (!User) {
         <a [routerLink]="['/login']" class="auth-link">
           <i class="fas fa-sign-in-alt"></i> Login
         </a>
@@ -18,10 +17,9 @@
         <a [routerLink]="['/signup']" class="auth-link">
           <i class="fas fa-user-plus"></i> Register
         </a>
+    }
 
-    </ng-container>
-
-    <ng-container *ngIf="User">
+    @if (User) {
         <span class="user-name">
           <i class="fas fa-user-circle"></i> Welcome, {{ User.fullName }}
         </span>
@@ -41,8 +39,7 @@
         <a href="/logout" class="auth-link logout">
           <i class="fas fa-sign-out-alt"></i> Logout
         </a>
-
-    </ng-container>
+    }
 
   </nav>
 </header>
@@ -52,13 +49,18 @@
 
     <h2>Create Account</h2>
 
-    <div class="message-box error-box" *ngIf="error">{{ error }}</div>
-    <div class="message-box success-box" *ngIf="success">{{ success }}</div>
+    @if (error) {
+      <div class="message-box error-box">{{ error }}</div>
+    }
+    
+    @if (success) {
+      <div class="message-box success-box">{{ success }}</div>
+    }
 
     <form (ngSubmit)="register()">
 
       <div class="form-group">
-        <label for="fullName">Full Name</label>
+        <label for="fullName">Full Name <span class="required-star">*</span></label>
         <input type="text" id="fullName" name="fullName" placeholder="John Doe" required
             [(ngModel)]="formData.fullName">
       </div>
@@ -94,10 +96,7 @@
         Already have an account?
         <a [routerLink]="['/login']">Login Here</a>
       </p>
+
     </form>
   </div>
 </main>
-
-<footer>
-  <p>&copy; 2025 Fleet Operations Tracker Project. INFR3120.</p>
-</footer>

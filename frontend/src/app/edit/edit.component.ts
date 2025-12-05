@@ -1,30 +1,36 @@
+// src/app/edit/edit.component.ts
+
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule } from '@angular/common'; // <-- NEW: For *ngIf
+import { FormsModule } from '@angular/forms'; // <-- NEW: For [(ngModel)]
+import { Router, RouterLink, ActivatedRoute } from '@angular/router'; // <-- NEW: For routerLink
 import { AuthService } from '../services/auth.services';
 import { TrucksService } from '../services/truck.services';
 import { User } from '../models/user.models';
-import { Trip } from '../models/trip.models';
+import { Trip, TripCreationPayload } from '../models/trip.models'; // Placeholder import
 
 @Component({
   selector: 'app-edit',
+  standalone: true, // <-- NEW
+  imports: [CommonModule, FormsModule, RouterLink], // <-- NEW: Required imports
   templateUrl: './edit.component.html',
-  styleUrls: ['/src/css/form_style.css'], // Adjust path if needed
+  styleUrls: ['/src/css/form_style.css'], 
 })
 export class EditComponent implements OnInit {
   title = 'Edit Trip';
   User: User | null = null;
-  activePage = 'trucks';
-  trip: Trip | any = {}; // Holds the trip data
-  tripId: string | null = null;
+  activePage = 'trucks'; 
   error: string | null = null;
   success: string | null = null;
-  isModalOpen: boolean = false;
+  trip: Trip | null = null;
+  tripId: string | null = null;
+  isModalOpen: boolean = false; 
 
   constructor(
     private authService: AuthService,
     private trucksService: TrucksService,
-    private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute 
   ) { }
 
   ngOnInit(): void {
@@ -32,45 +38,43 @@ export class EditComponent implements OnInit {
       this.User = user;
       if (!this.User) {
         this.router.navigate(['/login']);
+      } else {
+        this.tripId = this.route.snapshot.paramMap.get('id');
+        if (this.tripId) {
+          this.getTripDetails(this.tripId);
+        } else {
+          this.error = 'No trip ID provided.';
+        }
       }
     });
-
-    this.tripId = this.route.snapshot.paramMap.get('id');
-    if (this.tripId) {
-      this.loadTripData(this.tripId);
-    } else {
-      this.error = 'No Trip ID provided.';
-    }
   }
 
-  loadTripData(id: string): void {
+  getTripDetails(id: string): void {
     this.trucksService.getTripById(id).subscribe(response => {
       if (response.error) {
         this.error = response.error;
-        this.trip = {};
       } else {
-        this.trip = response as Trip;
-        this.formatDatesForInput(); // Re-format ISO dates for <input type="date">
+        this.trip = response.trip;
+        this.title = `Edit Trip: ${this.trip?.tripName || id}`;
       }
     });
   }
 
-  // Helper to format ISO date strings for HTML input[type=date] (YYYY-MM-DD)
-  formatDatesForInput(): void {
-    if (this.trip.scheduledDeparture) {
-      this.trip.scheduledDeparture = new Date(this.trip.scheduledDeparture).toISOString().substring(0, 10);
-    }
-    if (this.trip.estimatedArrival) {
-      this.trip.estimatedArrival = new Date(this.trip.estimatedArrival).toISOString().substring(0, 10);
-    }
-  }
-
-  saveChanges(): void {
+  saveTrip(): void {
     this.error = null;
     this.success = null;
-    if (!this.tripId) return;
+    
+    if (!this.trip || !this.tripId) {
+        this.error = 'Trip data is missing.';
+        return;
+    }
 
-    this.trucksService.updateTrip(this.tripId, this.trip).subscribe(response => {
+    const payload: TripCreationPayload = { 
+        ...this.trip, 
+        weightKg: Number(this.trip.weightKg) 
+    };
+
+    this.trucksService.updateTrip(this.tripId, payload).subscribe(response => {
       if (response.error) {
         this.error = response.error;
       } else {
@@ -81,16 +85,20 @@ export class EditComponent implements OnInit {
   }
 
   deleteTrip(): void {
-    this.isModalOpen = false;
     this.error = null;
     this.success = null;
-    if (!this.tripId) return;
+    this.isModalOpen = false; 
+
+    if (!this.tripId) {
+        this.error = 'Trip ID is missing for deletion.';
+        return;
+    }
 
     this.trucksService.deleteTrip(this.tripId).subscribe(response => {
       if (response.error) {
         this.error = response.error;
       } else {
-        this.success = 'Trip deleted successfully.';
+        this.success = 'Trip deleted successfully!';
         setTimeout(() => this.router.navigate(['/trucks']), 1500);
       }
     });

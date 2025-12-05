@@ -1,12 +1,18 @@
+// src/app/forgot-password/forgot-password.component.ts
+
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common'; // <-- NEW: For *ngIf
+import { FormsModule } from '@angular/forms'; // <-- NEW: For [(ngModel)]
+import { Router, RouterLink } from '@angular/router'; // <-- NEW: For routerLink
 import { AuthService } from '../services/auth.services';
 import { User } from '../models/user.models';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-forgot-password',
+  standalone: true, // <-- NEW
+  imports: [CommonModule, FormsModule, RouterLink], // <-- NEW: Required imports
   templateUrl: './forgot-password.component.html',
-  styleUrls: ['/src/css/form_style.css'], // Adjust path if needed
+  styleUrls: ['/src/css/form_style.css'], 
 })
 export class ForgotPasswordComponent implements OnInit {
   title = 'Forgot Password';
@@ -14,7 +20,7 @@ export class ForgotPasswordComponent implements OnInit {
   activePage = 'forgot-password';
   email: string = '';
   error: string | null = null;
-  success: string | null = null;
+  success: string | null = null; 
 
   constructor(private authService: AuthService, private router: Router) { }
 
@@ -32,13 +38,7 @@ export class ForgotPasswordComponent implements OnInit {
       if (response.error) {
         this.error = response.error;
       } else {
-        // The backend response suggests it returns a generic message,
-        // which is good practice for security.
         this.success = response.message || 'If an account was found, a reset link has been sent to your email.';
-
-        // For your lab project demo, which returns userId on success, 
-        // you might want to log it or use it for the reset link simulation.
-        // console.log("Demo userId to use for next step:", response.userId);
       }
     });
   }
