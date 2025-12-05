@@ -57,7 +57,7 @@ const TruckSchema = new mongoose.Schema({
     // Status (Automatically set when created)
     status: {
         type: String,
-        enum: ['Scheduled', 'In Transit', 'Delayed', 'Completed', 'Cancelled'],
+        enum: ['Scheduled', 'In Transit', 'Delayed', 'Delivered',],
         default: 'Scheduled'
     },
     
