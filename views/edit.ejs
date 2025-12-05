@@ -1,176 +1,159 @@
-<main class="page-content">
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <meta charset="UTF-8" />
- <meta name="viewport" content="width=device-width, initial-scale=1.0" />
- <title>Fleet Operations Tracker |
-<%= title %></title>
- <link rel="stylesheet" href="/css/style.css" />
- <link rel="stylesheet" href="/css/form_style.css" /> 
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Fleet Operations Tracker | <%= title %></title>
+
+  <!-- FONT AWESOME -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/form_style.css">
 </head>
+
 <body>
-    
-    <header>
-        <div class="logo">
-            <img src="/img/logo.jpg" alt="Team Logo" />
-            <h1>Fleet Operations Tracker</h1>
-        </div>
-        <nav>
-            <% if (!User) { %>
-                <a href="/login" class="auth-link">Login</a>
-                <a href="/auth/google" class="hero-btn google-btn">Sign in with Google</a>
-                <a href="/signup" class="auth-link">Register</a>
-            <% } else { %>
-                <span class="user-name">Welcome, <%= User.fullName %></span>
-                <a href="/" class="<%= activePage === 'home' ? 'active' : '' %>">Home</a>
-                <a href="/create" class="<%= activePage === 'create' ? 'active' : '' %>">Log New Trip</a>
-                <a href="/trucks" class="<%= activePage === 'trucks' ? 'active' : '' %>">View Active Trips</a>
-                <a href="/logout" class="auth-link logout">Logout</a>
-            <% } %>
-        </nav>
-    </header>
 
-    <% if (error) { %>
-        <div class="message-box error-box"><%= error %></div>
+<header>
+  <div class="logo">
+    <img src="/img/logo.jpg" alt="Team Logo">
+    <h1>Fleet Operations Tracker</h1>
+  </div>
+
+  <!-- NAV BAR -->
+  <nav>
+    <% if (!User) { %>
+      <a href="/login" class="auth-link"><i class="fas fa-sign-in-alt"></i> Login</a>
+      <a href="/auth/google" class="hero-btn google-btn"><i class="fab fa-google"></i> Google</a>
+      <a href="/signup" class="auth-link"><i class="fas fa-user-plus"></i> Register</a>
+    <% } else { %>
+      <span class="user-name"><i class="fas fa-user-circle"></i> <%= User.fullName %></span>
+      <a href="/" class="<%= activePage === 'home' ? 'active' : '' %>"><i class="fas fa-home"></i> Home</a>
+      <a href="/create" class="<%= activePage === 'create' ? 'active' : '' %>"><i class="fas fa-plus-circle"></i> Log</a>
+      <a href="/trucks" class="<%= activePage === 'trucks' ? 'active' : '' %>"><i class="fas fa-truck"></i> Trips</a>
+      <a href="/logout" class="auth-link logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
     <% } %>
+  </nav>
+</header>
 
-    <div class="form-container">
-      <h2>Editing Trip: <%= trip.tripName %> (<%= trip.truckId %>)</h2>
-      <p>Trip ID: <%= trip._id %></p>
+<% if (error) { %>
+  <div class="message-box error-box"><%= error %></div>
+<% } %>
 
-      <form action="/update-trip/<%= trip._id %>" method="POST">
-      
-        <h3>Trip Details</h3>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="tripName">Trip Name <span class="required-star">*</span></label>
-                <input type="text" id="tripName" name="tripName" value="<%= trip.tripName %>" required>
-            </div>
-            <div class="form-group">
-                <label for="truckId">Truck/Unit ID <span class="required-star">*</span></label>
-                <input type="text" id="truckId" name="truckId" value="<%= trip.truckId %>" required>
-            </div>
-        </div>
+<div class="form-container">
+  <h2>Editing Trip: <%= trip.tripName %> (<%= trip.truckId %>)</h2>
+  <p>Trip ID: <%= trip._id %></p>
 
-        <div class="form-row">
-            <div class="form-group">
-                <label for="driverName">Driver Name <span class="required-star">*</span></label>
-                <input type="text" id="driverName" name="driverName" value="<%= trip.driverName %>" required>
-            </div>
-            <div class="form-group">
-                <label for="status">Current Status <span class="required-star">*</span></label>
-                <select id="status" name="status" required>
-                    <option value="Scheduled" <%= trip.status === 'Scheduled' ? 'selected' : '' %>>Scheduled</option>
-                    <option value="In Transit" <%= trip.status === 'In Transit' ? 'selected' : '' %>>In Transit</option>
-                    <option value="Delayed" <%= trip.status === 'Delayed' ? 'selected' : '' %>>Delayed</option>
-                    <option value="Delivered" <%= trip.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                </select>
-            </div>
-        </div>
-        
-        <h3>Scheduling</h3>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="scheduledDeparture">Scheduled Departure Date <span class="required-star">*</span></label>
-                <input 
-                    type="date" 
-                    id="scheduledDeparture" 
-                    name="scheduledDeparture" 
-                    value="<%= trip.scheduledDeparture ? trip.scheduledDeparture.toISOString().substring(0, 10) : '' %>" 
-                    required
-                >
-            </div>
-            
-            <div class="form-group">
-                <label for="estimatedArrival">Estimated Arrival Date</label>
-                <input 
-                    type="date" 
-                    id="estimatedArrival" 
-                    name="estimatedArrival" 
-                    value="<%= trip.estimatedArrival ? trip.estimatedArrival.toISOString().substring(0, 10) : '' %>"
-                >
-            </div>
-        </div>
+  <!-- UPDATE FORM -->
+  <form action="/update-trip/<%= trip._id %>" method="POST">
 
-        <h3>Cargo Information</h3>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="cargoType">Cargo Type <span class="required-star">*</span></label>
-                <select id="cargoType" name="cargoType" required>
-                    <option value="">-- Select Cargo Type --</option>
-                    <option value="General Freight" <%= trip.cargoType === 'General Freight' ? 'selected' : '' %>>General Freight</option>
-                    <option value="Perishables" <%= trip.cargoType === 'Perishables' ? 'selected' : '' %>>Refrigerated Goods (Perishables)</option>
-                    <option value="Bulk Liquid" <%= trip.cargoType === 'Bulk Liquid' ? 'selected' : '' %>>Bulk Liquid</option>
-                    <option value="Hazardous" <%= trip.cargoType === 'Hazardous' ? 'selected' : '' %>>Hazardous Materials</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="weightKg">Total Weight (kg)</label>
-                <input type="number" id="weightKg" name="weightKg" value="<%= trip.weightKg %>" placeholder="e.g., 25000" min="0">
-            </div>
-        </div>
+    <h3>Trip Details</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Trip Name *</label>
+        <input type="text" name="tripName" value="<%= trip.tripName %>" required>
+      </div>
 
-        <div class="form-group">
-            <label for="manifestSummary">Manifest Summary / Details <span class="required-star">*</span></label>
-            <textarea id="manifestSummary" name="manifestSummary" rows="4" required placeholder="List bill of lading numbers, item specifics, or any special route instructions."><%= trip.manifestSummary %></textarea>
-        </div>
-        
-        <div class="form-group action-buttons">
-            <a href="/trucks" class="submit-btn secondary" style="margin-right: 10px;">Cancel</a>
-            <button type="submit" class="submit-btn primary">Save Changes</button>
-            <button type="button" id="deleteButton" class="submit-btn delete-btn">Delete Trip</button>
-        </div>
-      </form>
+      <div class="form-group">
+        <label>Truck ID *</label>
+        <input type="text" name="truckId" value="<%= trip.truckId %>" required>
+      </div>
     </div>
 
+    <div class="form-row">
+      <div class="form-group">
+        <label>Driver Name *</label>
+        <input type="text" name="driverName" value="<%= trip.driverName %>" required>
+      </div>
 
-    <div id="confirmationModal" class="modal">
-        <div class="modal-content">
-            <h3>Confirm Deletion</h3>
-            <form id="deleteForm" action="/delete-trip/<%= trip._id %>" method="POST">
-                </form>
-            <p>Are you sure you want to permanently delete this trip? This action cannot be undone.</p>
-            <div style="margin-top: 20px;">
-                <button id="cancelDelete" class="submit-btn secondary" style="margin-right: 10px;">Cancel</button>
-                <button id="confirmDelete" class="submit-btn delete-btn">Yes, Delete It</button>
-            </div>
-        </div>
+      <div class="form-group">
+        <label>Status *</label>
+        <select name="status" required>
+          <option value="Scheduled" <%= trip.status === 'Scheduled' ? 'selected' : '' %>>Scheduled</option>
+          <option value="In Transit" <%= trip.status === 'In Transit' ? 'selected' : '' %>>In Transit</option>
+          <option value="Delayed" <%= trip.status === 'Delayed' ? 'selected' : '' %>>Delayed</option>
+          <option value="Delivered" <%= trip.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+        </select>
+      </div>
     </div>
 
-</main>
+    <h3>Scheduling</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Scheduled Departure *</label>
+        <input type="date" name="scheduledDeparture"
+          value="<%= trip.scheduledDeparture ? trip.scheduledDeparture.toISOString().substring(0,10) : '' %>" required>
+      </div>
 
+      <div class="form-group">
+        <label>Estimated Arrival</label>
+        <input type="date" name="estimatedArrival"
+          value="<%= trip.estimatedArrival ? trip.estimatedArrival.toISOString().substring(0,10) : '' %>">
+      </div>
+    </div>
+
+    <h3>Cargo Information</h3>
+    <div class="form-row">
+
+      <div class="form-group">
+        <label>Cargo Type *</label>
+        <select name="cargoType" required>
+          <option value="General Freight" <%= trip.cargoType === 'General Freight' ? 'selected' : '' %>>General Freight</option>
+          <option value="Refrigerated Goods (Perishables)" <%= trip.cargoType === 'Refrigerated Goods (Perishables)' ? 'selected' : '' %>>Refrigerated Goods (Perishables)</option>
+          <option value="Bulk Liquid" <%= trip.cargoType === 'Bulk Liquid' ? 'selected' : '' %>>Bulk Liquid</option>
+          <option value="Hazardous Materials" <%= trip.cargoType === 'Hazardous Materials' ? 'selected' : '' %>>Hazardous Materials</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Total Weight (kg)</label>
+        <input type="number" name="weightKg" value="<%= trip.weightKg %>" min="0">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Manifest Summary *</label>
+      <textarea name="manifestSummary" rows="4" required><%= trip.manifestSummary %></textarea>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="form-group action-buttons">
+      <a href="/trucks" class="submit-btn secondary">Cancel</a>
+      <button type="submit" class="submit-btn primary">Save Changes</button>
+      <button type="button" id="deleteButton" class="submit-btn delete-btn">Delete Trip</button>
+    </div>
+
+  </form>
+</div>
+
+<!--  CONFIRM DELETE POPUP -->
+<div id="confirmationModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h3>Delete this trip?</h3>
+
+    <form id="deleteForm" action="/delete-trip/<%= trip._id %>" method="POST"></form>
+
+    <button id="confirmDelete" class="submit-btn delete-btn">Yes</button>
+    <button id="cancelDelete" class="submit-btn secondary">Cancel</button>
+  </div>
+</div>
+
+<!--  POPUP SCRIPT  -->
 <script>
-    // Get elements
-    const deleteButton = document.getElementById('deleteButton');
-    const deleteForm = document.getElementById('deleteForm');
-    const modal = document.getElementById('confirmationModal');
-    const confirmDelete = document.getElementById('confirmDelete');
-    const cancelDelete = document.getElementById('cancelDelete');
+  const deleteButton = document.getElementById('deleteButton');
+  const deleteForm = document.getElementById('deleteForm');
+  const modal = document.getElementById('confirmationModal');
+  const confirmDelete = document.getElementById('confirmDelete');
+  const cancelDelete = document.getElementById('cancelDelete');
 
-    // Show the modal when the delete button is clicked
-    deleteButton.addEventListener('click', (e) => {
-        // Prevent form submission if the button type was 'submit'
-        e.preventDefault(); 
-        modal.style.display = 'flex';
-    });
-
-    // Hide the modal when cancel is clicked
-    cancelDelete.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
-
-    // Submit the form when confirm is clicked
-    confirmDelete.addEventListener('click', () => {
-        // Submit the form using its action attribute
-        deleteForm.submit(); 
-        modal.style.display = 'none';
-    });
-    
+  deleteButton.onclick = () => modal.style.display = 'block';
+  cancelDelete.onclick = () => modal.style.display = 'none';
+  confirmDelete.onclick = () => deleteForm.submit();
 </script>
 
 <footer>
-    <p>&copy; 2025 Fleet Operations Tracker Project. INFR3120.</p>
+  <p>&copy; 2025 Fleet Operations Tracker Project. INFR3120.</p>
 </footer>
 
 </body>
