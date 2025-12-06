@@ -6,4 +6,7 @@ To ensure a smooth user experience, the Fleet Operations system's initial releas
 While authentication is not required at this stage of development , the design prioritizes easy navigation to allow users to fully perform CRUD (Create, Read, Update, Delete) operations on their incident reports through a simple, functional interface, ensuring the core application logic is solid before moving to advanced features. This foundational interface will be deployed and accessible via a chosen cloud service provider, representing the first complete functional release of the Web Application.
 
 
-the link to the site: https://truck-shipment-managment.onrender.com
+the link to the site with both front and backend on the same server: https://truck-shipment-managment.onrender.com
+
+link to the front end site:https://truck-tracker-project.netlify.app/
+link to back end site in case you want it:https://infr3120-fall25-project-5e00.onrender.com/
